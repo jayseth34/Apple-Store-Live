@@ -1,0 +1,62 @@
+<!-- Page Header -->
+<section class="page-header">
+  <div class="container">
+    <h1>All Products</h1>
+    <p>Discover the complete collection of Apple products</p>
+  </div>
+</section>
+
+<!-- Filter Section -->
+<section class="filter-section">
+  <div class="container">
+    <div class="filter-controls">
+      <div class="results-info">Showing 1-{{products.length}} of {{products.length}} results</div>
+      <div class="filter-right">
+        <select class="sort-dropdown" (change)="onSortChange($event)">
+          <option value="latest">Sort by latest</option>
+          <option value="popularity">Sort by popularity</option>
+          <option value="price-low">Sort by price: low to high</option>
+          <option value="price-high">Sort by price: high to low</option>
+          <option value="rating">Sort by rating</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Products Section -->
+<section class="products-section">
+  <div class="container">
+    <div class="products-grid fade-in">
+      <div class="product-card" *ngFor="let product of products">
+        <div class="product-badge" [ngClass]="product.badgeClass">{{product.badge}}</div>
+        <div class="product-image" (click)="goToProductDetails(product.id)">
+          <img [src]="product.image" [alt]="product.name">
+        </div>
+        <div class="product-content">
+          <div class="product-category">{{product.category}}</div>
+          <h3 class="product-title">{{product.name}}</h3>
+          <p class="product-description">{{product.description}}</p>
+          <div class="product-price">
+            <span class="current-price">₹{{product.currentPrice | number}}.00</span>
+            <span class="original-price" *ngIf="product.originalPrice">₹{{product.originalPrice | number}}.00</span>
+            <span class="discount-percent" *ngIf="product.discount">-{{product.discount}}%</span>
+          </div>
+          <div class="product-actions">
+            <button class="btn-primary" (click)="addToCart(product)" [disabled]="product.outOfStock">
+              {{product.outOfStock ? 'Out of Stock' : 'Add to Cart'}}
+            </button>
+            <button class="btn-secondary" (click)="toggleWishlist(product)">
+              <i [class]="product.inWishlist ? 'fas fa-heart' : 'far fa-heart'"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WhatsApp Button -->
+<a href="https://wa.me/1234567890" class="whatsapp-btn">
+  <i class="fab fa-whatsapp"></i>Click here
+</a>

@@ -1,0 +1,1419 @@
+/* Enhanced Product Categories with Advanced Animations */
+.product-categories {
+    margin: 80px 0;
+    padding: 0 20px;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+}
+
+.category-card {
+    position: relative;
+    height: 420px;
+    border-radius: 24px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    transform-style: preserve-3d;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+    background: #f8f9fa;
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg,
+            rgba(0, 122, 255, 0.1) 0%,
+            rgba(175, 82, 222, 0.15) 30%,
+            rgba(52, 199, 89, 0.1) 60%,
+            rgba(255, 149, 0, 0.12) 100%);
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    z-index: 1;
+}
+
+.category-card:hover::before {
+    opacity: 1;
+}
+
+/* Background Image */
+.category-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+    filter: brightness(0.8) contrast(1.1);
+}
+
+.category-card:hover .category-bg {
+    transform: scale(1.15);
+    filter: brightness(0.5) contrast(1.4);
+}
+
+/* Enhanced Overlay with Slide-up Gradient */
+.category-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg,
+            rgba(0, 0, 0, 0.1) 0%,
+            rgba(0, 0, 0, 0.3) 30%,
+            rgba(0, 0, 0, 0.6) 70%,
+            rgba(0, 0, 0, 0.85) 100%);
+    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    z-index: 2;
+}
+
+.category-card:hover .category-overlay {
+    background: linear-gradient(180deg,
+            rgba(0, 0, 0, 0.2) 0%,
+            rgba(0, 0, 0, 0.5) 20%,
+            rgba(0, 0, 0, 0.8) 60%,
+            rgba(0, 0, 0, 0.95) 100%);
+}
+
+/* Slide-up Gradient Effect */
+.category-slide-gradient {
+    position: absolute;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg,
+            rgba(0, 122, 255, 0.8) 0%,
+            rgba(175, 82, 222, 0.7) 25%,
+            rgba(52, 199, 89, 0.6) 50%,
+            rgba(255, 149, 0, 0.7) 75%,
+            rgba(255, 59, 48, 0.8) 100%);
+    transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+    opacity: 0;
+    z-index: 3;
+    mix-blend-mode: multiply;
+}
+
+.category-card:hover .category-slide-gradient {
+    bottom: 0;
+    opacity: 0.6;
+}
+
+/* Content */
+.category-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 40px 28px;
+    color: white;
+    z-index: 4;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.category-card:hover .category-content {
+    transform: translateY(0);
+}
+
+.category-content h3 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    transform: translateY(25px);
+    opacity: 0.85;
+    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.category-card:hover .category-content h3 {
+    transform: translateY(0);
+    opacity: 1;
+    font-size: 38px;
+    text-shadow: 0 6px 30px rgba(0, 0, 0, 0.8);
+}
+
+.category-description {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+    font-weight: 400;
+}
+
+.category-card:hover .category-description {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.2s;
+}
+
+.category-button-container {
+    opacity: 0;
+    transform: translateY(25px);
+    transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+    transition-delay: 0.1s;
+}
+
+.category-card:hover .category-button-container {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.4s;
+}
+
+/* Enhanced Button */
+.category-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 14px 28px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50px;
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    position: relative;
+    overflow: hidden;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.category-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.category-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    color: white;
+}
+
+.category-btn:hover::before {
+    left: 100%;
+}
+
+.category-btn::after {
+    content: '→';
+    margin-left: 10px;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    font-size: 16px;
+}
+
+.category-btn:hover::after {
+    transform: translateX(6px);
+}
+
+/* Enhanced Hover Effects */
+.category-card:hover {
+    transform: translateY(-8px) rotateX(2deg);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
+}
+
+/* Animated Particles */
+.category-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    opacity: 0;
+    transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+}
+
+.category-card:hover .particle {
+    opacity: 1;
+    animation: floatParticles 4s ease-in-out infinite;
+}
+
+.particle:nth-child(1) {
+    top: 15%;
+    left: 15%;
+    animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+    top: 25%;
+    left: 80%;
+    animation-delay: 0.8s;
+}
+
+.particle:nth-child(3) {
+    top: 45%;
+    left: 20%;
+    animation-delay: 1.2s;
+}
+
+.particle:nth-child(4) {
+    top: 65%;
+    left: 75%;
+    animation-delay: 0.4s;
+}
+
+.particle:nth-child(5) {
+    top: 35%;
+    left: 60%;
+    animation-delay: 1.6s;
+}
+
+.particle:nth-child(6) {
+    top: 70%;
+    left: 40%;
+    animation-delay: 2s;
+}
+
+@keyframes floatParticles {
+
+    0%,
+    100% {
+        transform: translateY(0px) scale(1) rotate(0deg);
+        opacity: 0.8;
+    }
+
+    25% {
+        transform: translateY(-15px) scale(1.2) rotate(90deg);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translateY(-25px) scale(0.8) rotate(180deg);
+        opacity: 0.6;
+    }
+
+    75% {
+        transform: translateY(-20px) scale(1.1) rotate(270deg);
+        opacity: 0.9;
+    }
+}
+
+/* Glow Effect */
+.category-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle,
+            rgba(0, 122, 255, 0.4) 0%,
+            rgba(175, 82, 222, 0.3) 25%,
+            rgba(52, 199, 89, 0.25) 50%,
+            rgba(255, 149, 0, 0.3) 75%,
+            transparent 85%);
+    opacity: 0;
+    transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+    z-index: 0;
+    animation: rotateGlow 15s linear infinite;
+}
+
+.category-card:hover .category-glow {
+    opacity: 0.7;
+}
+
+@keyframes rotateGlow {
+    from {
+        transform: rotate(0deg) scale(1);
+    }
+
+    50% {
+        transform: rotate(180deg) scale(1.1);
+    }
+
+    to {
+        transform: rotate(360deg) scale(1);
+    }
+}
+
+/* Category-specific effects */
+.category-card[data-category="1"]:hover {
+    box-shadow: 0 25px 80px rgba(0, 122, 255, 0.4);
+}
+
+.category-card[data-category="2"]:hover {
+    box-shadow: 0 25px 80px rgba(52, 199, 89, 0.4);
+}
+
+.category-card[data-category="3"]:hover {
+    box-shadow: 0 25px 80px rgba(175, 82, 222, 0.4);
+}
+
+.category-card[data-category="4"]:hover {
+    box-shadow: 0 25px 80px rgba(255, 149, 0, 0.4);
+}
+
+/* Large Text Overlay Effect */
+.category-card::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0) rotate(-10deg);
+    font-size: 140px;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.08);
+    z-index: 2;
+    transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+    pointer-events: none;
+    text-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
+    font-family: 'SF Pro Display', 'Inter', -apple-system, sans-serif;
+    letter-spacing: -0.05em;
+}
+
+.category-card:hover::after {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .category-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+    .category-card {
+        height: 380px;
+    }
+
+    .category-content h3 {
+        font-size: 28px;
+    }
+
+    .category-card:hover .category-content h3 {
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .category-card {
+        height: 360px;
+    }
+}
+
+@media (max-width: 768px) {
+    .category-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .category-card {
+        height: 340px;
+    }
+
+    .category-content {
+        padding: 28px 24px;
+    }
+
+    .category-content h3 {
+        font-size: 26px;
+    }
+
+    .category-card:hover .category-content h3 {
+        font-size: 30px;
+    }
+
+    .category-card::after {
+        font-size: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .category-card {
+        height: 300px;
+    }
+
+    .category-content {
+        padding: 24px 20px;
+    }
+
+    .category-content h3 {
+        font-size: 24px;
+    }
+
+    .category-card:hover .category-content h3 {
+        font-size: 26px;
+    }
+
+    .category-card::after {
+        font-size: 80px;
+    }
+}
+
+
+/* Clean and Minimal Top Picks Section */
+.top-picks {
+    margin: 80px 0;
+    padding: 0 20px;
+    position: relative;
+}
+
+/* Simple Title Styling */
+.picks-title {
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    margin-bottom: 50px;
+    color: var(--apple-text);
+}
+
+.picks-title span {
+    font-weight: 400;
+    color: var(--apple-text-secondary);
+}
+
+/* Clean Scroll Container */
+.picks-scroll {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    padding: 20px 0 40px 0;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.picks-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* Minimal Pick Item Cards */
+.pick-item {
+    flex-shrink: 0;
+    width: 280px;
+    scroll-snap-align: start;
+    cursor: pointer;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Simple Hover Effect */
+.pick-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Clean Image Container */
+.pick-image-container {
+    position: relative;
+    height: 200px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.pick-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.pick-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Simple Content Styling */
+.pick-item-content {
+    padding: 20px;
+    text-align: center;
+}
+
+.pick-item-content p {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--apple-text);
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+}
+
+/* Clean Price Display */
+.pick-price {
+    font-size: 14px;
+    color: var(--apple-text-secondary);
+    margin-top: 8px;
+}
+
+.current-price {
+    color: var(--apple-text);
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.old-price {
+    text-decoration: line-through;
+    margin-left: 6px;
+    font-size: 13px;
+    color: var(--apple-text-secondary);
+}
+
+/* Simple Badge */
+.pick-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--apple-text);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Clean Navigation Arrows */
+.picks-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.top-picks:hover .picks-nav {
+    opacity: 1;
+    visibility: visible;
+}
+
+.picks-nav:hover {
+    background: #f8f9fa;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.picks-nav-left {
+    left: -22px;
+}
+
+.picks-nav-right {
+    right: -22px;
+}
+
+.picks-nav i {
+    font-size: 14px;
+    color: var(--apple-text);
+}
+
+/* Simple Scroll Indicators */
+.picks-scroll-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+}
+
+.scroll-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.scroll-dot.active {
+    background: var(--apple-text);
+    transform: scale(1.3);
+}
+
+.scroll-dot:hover {
+    background: var(--apple-text-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .picks-scroll {
+        gap: 20px;
+        padding: 16px 0 32px 0;
+    }
+
+    .pick-item {
+        width: 260px;
+    }
+
+    .picks-title {
+        font-size: 36px;
+        margin-bottom: 40px;
+    }
+
+    .pick-image-container {
+        height: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .top-picks {
+        margin: 60px 0;
+        padding: 0 16px;
+    }
+
+    .picks-scroll {
+        gap: 16px;
+        padding: 12px 0 24px 0;
+    }
+
+    .pick-item {
+        width: 240px;
+    }
+
+    .pick-image-container {
+        height: 160px;
+        padding: 16px;
+    }
+
+    .picks-title {
+        font-size: 32px;
+        margin-bottom: 32px;
+    }
+
+    .picks-nav {
+        display: none;
+    }
+
+    .pick-item-content {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .picks-scroll {
+        gap: 12px;
+    }
+
+    .pick-item {
+        width: 220px;
+    }
+
+    .pick-image-container {
+        height: 140px;
+        padding: 12px;
+    }
+
+    .pick-item-content {
+        padding: 14px;
+    }
+
+    .pick-item-content p {
+        font-size: 14px;
+    }
+
+    .picks-title {
+        font-size: 28px;
+        margin-bottom: 24px;
+    }
+
+    .picks-scroll-indicator {
+        margin-top: 20px;
+    }
+}
+
+/* Optional: Remove animations completely for ultra-minimal look */
+@media (prefers-reduced-motion: reduce) {
+
+    .pick-item,
+    .pick-item img,
+    .picks-nav,
+    .scroll-dot {
+        transition: none;
+    }
+
+    .pick-item:hover {
+        transform: none;
+    }
+
+    .pick-item:hover img {
+        transform: none;
+    }
+}
+
+/* Enhanced Hot Deals - Scrollable Design */
+.hot-deals {
+    margin: 80px 0;
+    padding: 0 20px;
+    position: relative;
+}
+
+/* Title styling consistent with Top Picks */
+.hot-deals .picks-title {
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    margin-bottom: 50px;
+    color: var(--apple-text);
+}
+
+.hot-deals .picks-title span {
+    font-weight: 400;
+    color: var(--apple-text-secondary);
+}
+
+/* Convert grid to horizontal scroll */
+.deals-grid {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    padding: 20px 0 40px 0;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.deals-grid::-webkit-scrollbar {
+    display: none;
+}
+
+/* Enhanced Deal Cards */
+.deal-card {
+    flex-shrink: 0;
+    width: 297px;
+    scroll-snap-align: start;
+    background: white;
+    border-radius: 16px;
+    padding: 0;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+}
+
+.deal-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Deal Badge */
+.deal-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--apple-red);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    z-index: 5;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3);
+}
+
+/* Image Container */
+.deal-image-container {
+    height: 220px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.deal-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.deal-card:hover img {
+    transform: scale(1.05);
+}
+
+/* Content Section */
+.deal-card-content {
+    padding: 20px;
+    text-align: left;
+}
+
+.deal-card-content p {
+    font-size: 12px;
+    color: var(--apple-text-secondary);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.deal-card h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: var(--apple-text);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.deal-card-content>p:last-of-type {
+    font-size: 14px;
+    color: var(--apple-text-secondary);
+    margin-bottom: 12px;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* Price Display */
+.deal-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--apple-text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.deal-price-old {
+    font-size: 14px;
+    color: var(--apple-text-secondary);
+    text-decoration: line-through;
+    font-weight: 400;
+}
+
+/* Navigation Arrows for Hot Deals */
+.deals-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.hot-deals:hover .deals-nav {
+    opacity: 1;
+    visibility: visible;
+}
+
+.deals-nav:hover {
+    background: #f8f9fa;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.deals-nav-left {
+    left: -22px;
+}
+
+.deals-nav-right {
+    right: -22px;
+}
+
+.deals-nav i {
+    font-size: 14px;
+    color: var(--apple-text);
+}
+
+/* Scroll Indicators for Hot Deals */
+.deals-scroll-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+}
+
+.deals-scroll-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.deals-scroll-dot.active {
+    background: var(--apple-text);
+    transform: scale(1.3);
+}
+
+.deals-scroll-dot:hover {
+    background: var(--apple-text-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .deals-grid {
+        gap: 20px;
+        padding: 16px 0 32px 0;
+    }
+
+    .deal-card {
+        width: 300px;
+    }
+
+    .deal-image-container {
+        height: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hot-deals {
+        margin: 60px 0;
+        padding: 0 16px;
+    }
+
+    .deals-grid {
+        gap: 16px;
+        padding: 12px 0 24px 0;
+    }
+
+    .deal-card {
+        width: 280px;
+    }
+
+    .deal-image-container {
+        height: 180px;
+        padding: 16px;
+    }
+
+    .deals-nav {
+        display: none;
+    }
+
+    .deal-card-content {
+        padding: 16px;
+    }
+
+    .deal-card h4 {
+        font-size: 15px;
+    }
+
+    .deal-price {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .deals-grid {
+        gap: 12px;
+    }
+
+    .deal-card {
+        width: 260px;
+    }
+
+    .deal-image-container {
+        height: 160px;
+        padding: 12px;
+    }
+
+    .deal-card-content {
+        padding: 14px;
+    }
+
+    .deal-card h4 {
+        font-size: 14px;
+    }
+
+    .deal-price {
+        font-size: 15px;
+    }
+
+    .deals-scroll-indicator {
+        margin-top: 20px;
+    }
+}
+
+/* Enhanced Two Column Section */
+.two-column {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    margin: 80px 0;
+    padding: 0 20px;
+}
+
+/* Enhanced Products Column */
+.products-column {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.products-column:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 50px rgba(0, 0, 0, 0.12);
+}
+
+.products-column h3 {
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    margin-bottom: 30px !important;
+    color: var(--apple-text);
+    text-align: center;
+}
+
+/* Enhanced Products Grid */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+}
+
+.products-column .deal-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+.products-column .deal-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Product Card Image */
+.products-column .deal-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: contain;
+    padding: 16px;
+    background: #f8f9fa;
+    transition: transform 0.3s ease;
+}
+
+.products-column .deal-card:hover img {
+    transform: scale(1.05);
+}
+
+/* Product Card Content */
+.products-column .deal-card-content {
+    padding: 16px;
+    text-align: center;
+}
+
+.products-column .deal-card-content p {
+    font-size: 11px !important;
+    color: var(--apple-text-secondary) !important;
+    margin-bottom: 8px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.products-column .deal-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    color: var(--apple-text);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.products-column .deal-price {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--apple-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.products-column .deal-price-old {
+    font-size: 12px;
+    color: var(--apple-text-secondary);
+    text-decoration: line-through;
+    font-weight: 400;
+}
+
+/* Enhanced Accessories Section */
+.accessories-section {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+.accessory-card {
+    background: linear-gradient(135deg, var(--apple-blue) 0%, #0056D6 100%);
+    color: white;
+    border-radius: 20px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 200px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.accessory-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 122, 255, 0.3);
+}
+
+.accessory-card:nth-child(2) {
+    background: linear-gradient(135deg, var(--apple-green) 0%, #2AB653 100%);
+}
+
+.accessory-card:nth-child(2):hover {
+    box-shadow: 0 12px 40px rgba(52, 199, 89, 0.3);
+}
+
+/* Accessory Card Background Pattern */
+.accessory-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.accessory-card:hover::before {
+    opacity: 1;
+}
+
+.accessory-content h3 {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    margin-bottom: 12px !important;
+    color: white;
+}
+
+.accessory-content p {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    opacity: 0.9 !important;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.accessory-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 50px;
+    color: white !important;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: fit-content !important;
+    margin-top: 0 !important;
+}
+
+.accessory-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    transform: translateY(-2px);
+    color: white !important;
+}
+
+.accessory-btn::after {
+    content: '→';
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+}
+
+.accessory-btn:hover::after {
+    transform: translateX(4px);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .two-column {
+        gap: 32px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .accessory-card {
+        padding: 28px;
+        min-height: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .two-column {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        margin: 60px 0;
+    }
+
+    .products-column {
+        padding: 32px 24px;
+    }
+
+    .products-column h3 {
+        font-size: 24px !important;
+        margin-bottom: 24px !important;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+    }
+
+    .accessories-section {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .accessory-card {
+        padding: 24px;
+        min-height: 160px;
+    }
+
+    .accessory-content h3 {
+        font-size: 20px !important;
+    }
+
+    .accessory-content p {
+        font-size: 13px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .two-column {
+        margin: 40px 0;
+        padding: 0 16px;
+    }
+
+    .products-column {
+        padding: 24px 20px;
+    }
+
+    .products-column h3 {
+        font-size: 22px !important;
+        margin-bottom: 20px !important;
+    }
+
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .products-column .deal-card img {
+        height: 140px;
+        padding: 12px;
+    }
+
+    .products-column .deal-card-content {
+        padding: 12px;
+    }
+
+    .accessory-card {
+        padding: 20px;
+        min-height: 140px;
+    }
+
+    .accessory-content h3 {
+        font-size: 18px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .accessory-content p {
+        font-size: 12px !important;
+        margin-bottom: 16px;
+    }
+
+    .accessory-btn {
+        padding: 10px 20px;
+        font-size: 13px;
+    }
+}

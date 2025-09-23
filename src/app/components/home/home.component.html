@@ -1,0 +1,285 @@
+<main class="container">
+    <!-- Hero Section -->
+    <section class="hero-section fade-in">
+        <div class="hero-grid">
+            <div class="hero-card hero-card-large">
+                <h2>{{heroData.large.title}}</h2>
+                <p [innerHTML]="heroData.large.description"></p>
+                <a routerLink="/products" class="btn btn-outline">{{heroData.large.buttonText}}</a>
+            </div>
+            <div class="hero-card hero-card-medium">
+                <h3>{{heroData.medium.title}}</h3>
+                <p>{{heroData.medium.description}}</p>
+                <a routerLink="/products" class="btn-link">{{heroData.medium.buttonText}} →</a>
+            </div>
+            <div class="hero-card hero-card-small" [style.background]="heroData.small1.background"
+                [style.color]="heroData.small1.color">
+                <h3>{{heroData.small1.title}}</h3>
+                <p>{{heroData.small1.description}}</p>
+                <a routerLink="/products" class="btn-link"
+                    [style.color]="heroData.small1.color">{{heroData.small1.buttonText}} →</a>
+            </div>
+            <div class="hero-card hero-card-small" [style.background]="heroData.small2.background"
+                [style.color]="heroData.small2.color">
+                <h3>{{heroData.small2.title}}</h3>
+                <p>{{heroData.small2.description}}</p>
+                <a routerLink="/products" class="btn-link"
+                    [style.color]="heroData.small2.color">{{heroData.small2.buttonText}} →</a>
+            </div>
+            <div class="hero-card hero-card-small" [style.background]="heroData.small3.background"
+                [style.color]="heroData.small3.color">
+                <h3>{{heroData.small3.title}}</h3>
+                <p>{{heroData.small3.description}}</p>
+                <a routerLink="/products" class="btn-link"
+                    [style.color]="heroData.small3.color">{{heroData.small3.buttonText}} →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section fade-in">
+        <div class="feature-grid">
+            <div class="feature-card" *ngFor="let feature of features">
+                <i [class]="feature.icon"></i>
+                <p>{{feature.title}}</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Product Categories -->
+    <section class="product-categories fade-in">
+        <h2 class="section-title">Product Categories</h2>
+        <div class="category-grid">
+            <div class="category-card" *ngFor="let category of categories" [attr.data-category]="category.id"
+                [attr.data-text]="category.displayText" (click)="navigateToCategory(category.id)"
+                (mouseenter)="onCategoryHover(category.id)" (mouseleave)="onCategoryLeave(category.id)">
+
+                <!-- Background Image -->
+                <div class="category-bg" [style.background-image]="'url(' + category.backgroundImage + ')'"></div>
+
+                <!-- Slide-up Gradient Effect -->
+                <div class="category-slide-gradient"></div>
+
+                <!-- Overlay -->
+                <div class="category-overlay"></div>
+
+                <!-- Glow Effect -->
+                <div class="category-glow"></div>
+
+                <!-- Animated Particles -->
+                <div class="category-particles">
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                </div>
+
+                <!-- Content -->
+                <div class="category-content">
+                    <h3>{{category.name}}</h3>
+                    <p class="category-description">{{category.description}}</p>
+                    <div class="category-button-container">
+                        <a href="#" class="category-btn">{{category.buttonText}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enhanced Top Picks -->
+    <section class="top-picks fade-in">
+        <h2 class="picks-title">{{topPicksTitle.main}} <span>{{topPicksTitle.subtitle}}</span></h2>
+
+        <!-- Navigation Arrows -->
+        <div class="picks-nav picks-nav-left" (click)="scrollPicksLeft()">
+            <i class="fas fa-chevron-left"></i>
+        </div>
+        <div class="picks-nav picks-nav-right" (click)="scrollPicksRight()">
+            <i class="fas fa-chevron-right"></i>
+        </div>
+
+        <div class="picks-scroll" #picksScroll>
+            <div class="pick-item" *ngFor="let pick of topPicks" [attr.data-category]="pick.category"
+                (click)="navigateToCategory(pick.id)">
+
+                <!-- Image Container with Enhanced Effects -->
+                <div class="pick-image-container">
+                    <img [src]="pick.image" [alt]="pick.name" loading="lazy">
+                </div>
+
+                <!-- Content -->
+                <div class="pick-item-content">
+                    <p>{{pick.name}}</p>
+                    <div class="pick-price" *ngIf="pick.currentPrice">
+                        <span class="current-price">₹{{pick.currentPrice | number}}</span>
+                        <span class="old-price" *ngIf="pick.originalPrice">₹{{pick.originalPrice | number}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Indicators -->
+        <div class="picks-scroll-indicator">
+            <div class="scroll-dot" *ngFor="let dot of scrollDots; let i = index"
+                [class.active]="i === activeScrollIndex" (click)="scrollToIndex(i)"></div>
+        </div>
+    </section>
+
+    <!-- Camera Section -->
+    <section class="camera-section fade-in">
+        <div class="camera-content">
+            <h3 style="font-size: 14px; color: var(--apple-text-secondary); margin-bottom: 8px;">
+                {{featuredProduct.subtitle}}
+            </h3>
+            <h2>{{featuredProduct.title}}</h2>
+            <p>{{featuredProduct.description}}</p>
+            <a [routerLink]="['/product', featuredProduct.id]"
+                class="btn btn-primary">{{featuredProduct.buttonText}}</a>
+        </div>
+        <div class="camera-image">
+            <img [src]="featuredProduct.image" [alt]="featuredProduct.title">
+        </div>
+    </section>
+
+    <!-- Enhanced Hot Deals -->
+    <section class="hot-deals fade-in">
+        <h2 class="picks-title">{{hotDealsTitle.main}} <span>{{hotDealsTitle.subtitle}}</span></h2>
+
+        <!-- Navigation Arrows -->
+        <div class="deals-nav deals-nav-left" (click)="scrollDealsLeft()">
+            <i class="fas fa-chevron-left"></i>
+        </div>
+        <div class="deals-nav deals-nav-right" (click)="scrollDealsRight()">
+            <i class="fas fa-chevron-right"></i>
+        </div>
+
+        <div class="deals-grid" #dealsScroll>
+            <div class="deal-card" *ngFor="let deal of hotDeals" (click)="navigateToProduct(deal.id)">
+                <div class="deal-badge">{{deal.badge}}</div>
+
+                <!-- Image Container -->
+                <div class="deal-image-container">
+                    <img [src]="deal.image" [alt]="deal.name" loading="lazy">
+                </div>
+
+                <!-- Content -->
+                <div class="deal-card-content">
+                    <p>{{deal.category}}</p>
+                    <h4>{{deal.name}}</h4>
+                    <p *ngIf="deal.description">{{deal.description}}</p>
+                    <div class="deal-price">
+                        ₹{{deal.currentPrice | number}}.00
+                        <span class="deal-price-old" *ngIf="deal.originalPrice">₹{{deal.originalPrice |
+                            number}}.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Indicators -->
+        <div class="deals-scroll-indicator">
+            <div class="deals-scroll-dot" *ngFor="let dot of dealsScrollDots; let i = index"
+                [class.active]="i === activeDealsScrollIndex" (click)="scrollDealsToIndex(i)"></div>
+        </div>
+    </section>
+
+
+    <!-- Enhanced Two Column Section -->
+    <section class="two-column fade-in">
+        <!-- Products Column -->
+        <div class="products-column">
+            <h3>{{someProductsTitle}}</h3>
+            <div class="products-grid">
+                <div class="deal-card" *ngFor="let product of someProducts" (click)="navigateToProduct(product.id)">
+                    <div class="deal-badge">{{product.badge}}</div>
+                    <img [src]="product.image" [alt]="product.name" loading="lazy">
+                    <div class="deal-card-content">
+                        <p>{{product.category}}</p>
+                        <h4>{{product.name}}</h4>
+                        <div class="deal-price">
+                            ₹{{product.currentPrice | number}}.00
+                            <span class="deal-price-old">₹{{product.originalPrice | number}}.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Accessories Section with Two Cards -->
+        <div class="accessories-section">
+            <div class="accessory-card" *ngFor="let accessory of accessoriesCards"
+                (click)="navigateToCategory(accessory.categoryId)">
+                <div class="accessory-content">
+                    <h3>{{accessory.title}}</h3>
+                    <p>{{accessory.description}}</p>
+                    <a routerLink="/products" class="accessory-btn">{{accessory.buttonText}}</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Sidebar Layout -->
+    <section class="sidebar-layout fade-in">
+        <div class="sidebar">
+            <img [src]="sidebarData.image" [alt]="sidebarData.imageAlt">
+            <ul class="sidebar-menu">
+                <li *ngFor="let menuItem of sidebarData.menuItems" (click)="navigateToCategory(menuItem.id)">
+                    <i [class]="menuItem.icon"></i> {{menuItem.name}}
+                </li>
+            </ul>
+        </div>
+        <div>
+            <h2 class="section-title" style="text-align: left; margin-bottom: 30px;">{{bestSellingTitle}}</h2>
+            <div class="best-selling-grid">
+                <div class="deal-card" *ngFor="let product of bestSellingProducts"
+                    (click)="navigateToProduct(product.id)">
+                    <div class="deal-badge">{{product.badge}}</div>
+                    <img [src]="product.image" [alt]="product.name">
+                    <div class="deal-card-content">
+                        <p style="color: var(--apple-text-secondary); font-size: 12px;">{{product.category}}</p>
+                        <h4>{{product.name}}</h4>
+                        <div class="deal-price">
+                            ₹{{product.currentPrice | number}}.00
+                            <span class="deal-price-old">₹{{product.originalPrice | number}}.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Happy Customers -->
+     <!-- 
+    <section class="customers-section fade-in">
+        <h2 class="section-title">{{customersTitle.main}} <span
+                style="color: var(--apple-green);">{{customersTitle.highlight}}</span></h2>
+        <div class="customers-grid">
+            <div class="customer-card" *ngFor="let customer of customers">
+                <div class="customer-testimonial" *ngIf="customer.type === 'testimonial'">
+                    <p>"{{customer.testimonial}}"</p>
+                    <div class="customer-info">
+                        <div class="customer-avatar"></div>
+                        <div class="customer-details">
+                            <h5>{{customer.name}}</h5>
+                            <p>{{customer.status}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="customer-image" *ngIf="customer.type === 'image'">
+                    <img [src]="customer.image" [alt]="customer.title">
+                    <h5 style="margin-top: 16px; font-size: 14px;">{{customer.title}}</h5>
+                    <p style="font-size: 12px; opacity: 0.7;">{{customer.description}}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+-->
+
+<!-- WhatsApp Button -->
+<a [href]="whatsappLink" class="whatsapp-btn">
+    <i class="fab fa-whatsapp"></i>{{whatsappText}}
+</a>
