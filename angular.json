@@ -72,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "appstore:build:production"
+              "buildTarget": "appstore:build:production"
             },
             "development": {
-              "browserTarget": "appstore:build:development"
+              "buildTarget": "appstore:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -83,7 +83,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "appstore:build"
+            "buildTarget": "appstore:build"
           }
         },
         "test": {
