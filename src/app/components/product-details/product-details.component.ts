@@ -1,114 +1,176 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-
-interface StorageOption {
-  size: string;
-  price: number;
-}
-
-interface ColorOption {
-  name: string;
-  hex: string;
-}
-
-interface Product {
-  id: number;
-  name: string;
-  currentPrice: number;
-  originalPrice?: number;
-  discount?: number;
-  images: string[];
-  colors: ColorOption[];
-  storageOptions: StorageOption[];
-}
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { environment } from "../../../environments/environment";
+import { Product, fallbackImageForCategory, paiseToInr } from "../../models/product";
+import { CartService } from "../../services/cart.service";
+import { CheckoutProfileService } from "../../services/checkout-profile.service";
+import { MyOrdersService } from "../../services/my-orders.service";
+import { CheckoutCustomer, PaymentsService } from "../../services/payments.service";
+import { ProductsService } from "../../services/products.service";
+import { RazorpayService } from "../../services/razorpay.service";
 
 @Component({
-  selector: 'app-product-details',
-  templateUrl: './product-details.component.html',
-  styleUrls: ['./product-details.component.css']
+  selector: "app-product-details",
+  templateUrl: "./product-details.component.html",
+  styleUrls: ["./product-details.component.css"]
 })
 export class ProductDetailsComponent implements OnInit {
-
   product: Product | null = null;
-  selectedImageIndex = 0;
-  selectedColor = 'yellow';
-  selectedStorage = '128GB';
+  loading = false;
+  error: string | null = null;
   quantity = 1;
-  finalPrice = 69900;
+  paying = false;
+  paymentStatus: string | null = null;
+  addedToCart = false;
 
-  constructor(private route: ActivatedRoute) { }
+  customer: CheckoutCustomer;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private productsApi: ProductsService,
+    private paymentsApi: PaymentsService,
+    private razorpay: RazorpayService,
+    private cart: CartService,
+    private profile: CheckoutProfileService,
+    private myOrders: MyOrdersService
+  ) {
+    this.customer = this.profile.load();
+  }
 
   ngOnInit(): void {
-    const productId = this.route.snapshot.paramMap.get('id');
-    this.loadProduct(productId);
-  }
-
-  loadProduct(id: string | null): void {
-    // Mock product data - replace with actual service call
-    this.product = {
-      id: 1,
-      name: 'iPhone 15 Plus',
-      currentPrice: 69900,
-      originalPrice: 89900,
-      discount: 22,
-      images: [
-        'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-        // Add more images
-      ],
-      colors: [
-        { name: 'black', hex: '#000000' },
-        { name: 'blue', hex: '#007AFF' },
-        { name: 'green', hex: '#34C759' },
-        { name: 'pink', hex: '#FF69B4' },
-        { name: 'yellow', hex: '#FFD60A' }
-      ],
-      storageOptions: [
-        { size: '128GB', price: 69900 },
-        { size: '256GB', price: 79900 },
-        { size: '512GB', price: 99900 }
-      ]
-    };
-  }
-
-  selectImage(index: number): void {
-    this.selectedImageIndex = index;
-  }
-
-  selectColor(color: string): void {
-    this.selectedColor = color;
-  }
-
-  selectStorage(storage: StorageOption): void {
-    this.selectedStorage = storage.size;
-    this.finalPrice = storage.price * this.quantity;
-  }
-
-  increaseQuantity(): void {
-    this.quantity++;
-    this.updateFinalPrice();
-  }
-
-  decreaseQuantity(): void {
-    if (this.quantity > 1) {
-      this.quantity--;
-      this.updateFinalPrice();
+    const id = Number(this.route.snapshot.paramMap.get("id"));
+    if (!Number.isFinite(id)) {
+      this.router.navigateByUrl("/products");
+      return;
     }
+    this.load(id);
   }
 
-  updateFinalPrice(): void {
-    const selectedStorageOption = this.product?.storageOptions.find(s => s.size === this.selectedStorage);
-    if (selectedStorageOption) {
-      this.finalPrice = selectedStorageOption.price * this.quantity;
-    }
-  }
-
-  addToCart(): void {
-    console.log('Added to cart:', {
-      product: this.product?.name,
-      color: this.selectedColor,
-      storage: this.selectedStorage,
-      quantity: this.quantity,
-      totalPrice: this.finalPrice
+  load(id: number) {
+    this.loading = true;
+    this.error = null;
+    this.productsApi.get(id).subscribe({
+      next: (p) => {
+        this.product = p;
+        this.loading = false;
+      },
+      error: () => {
+        this.error = "Product not found";
+        this.loading = false;
+      }
     });
+  }
+
+  saveCustomer() {
+    this.profile.save(this.customer);
+  }
+
+  displayImageUrl() {
+    if (!this.product) return null;
+    if (!this.product.imagePath) return fallbackImageForCategory(this.product.category);
+    const p = this.product.imagePath;
+    if (p.startsWith("http")) return p;
+    if (p.startsWith("/")) return `${environment.apiBaseUrl}${p}`;
+    return `${environment.apiBaseUrl}/${p}`;
+  }
+
+  inr(paise: number) {
+    return paiseToInr(paise);
+  }
+
+  increaseQuantity() {
+    if (this.quantity < 10) this.quantity++;
+  }
+
+  decreaseQuantity() {
+    if (this.quantity > 1) this.quantity--;
+  }
+
+  isCustomerValid() {
+    const c = this.customer;
+    return (
+      c.name.trim().length >= 2 &&
+      c.phone.trim().length >= 8 &&
+      c.address1.trim().length >= 5 &&
+      c.city.trim().length >= 2 &&
+      c.state.trim().length >= 2 &&
+      c.pincode.trim().length >= 4
+    );
+  }
+
+  addToCart() {
+    if (!this.product) return;
+    this.cart.add(this.product.id, this.quantity);
+    this.addedToCart = true;
+    setTimeout(() => (this.addedToCart = false), 1600);
+  }
+
+  goCart() {
+    this.router.navigateByUrl("/cart");
+  }
+
+  async buyNow() {
+    if (!this.product) return;
+
+    this.paymentStatus = null;
+    if (!this.isCustomerValid()) {
+      this.paymentStatus = "Please fill delivery details";
+      return;
+    }
+
+    this.paying = true;
+    this.saveCustomer();
+
+    try {
+      const order = await this.paymentsApi
+        .createOrder(this.product.id, this.quantity, this.customer)
+        .toPromise();
+      if (!order) throw new Error("Failed to create order");
+
+      this.myOrders.addFromCreateOrder(order);
+
+      await this.razorpay.load();
+
+      const options: any = {
+        key: order.keyId,
+        amount: order.amountPaise,
+        currency: order.currency,
+        name: "Apple Store",
+        description: order.product.name,
+        order_id: order.razorpayOrderId,
+        handler: (response: any) => {
+          this.paymentsApi
+            .verifyPayment({
+              orderId: order.orderId,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            })
+            .subscribe({
+              next: () => {
+                this.router.navigate(["/order", order.publicId], { queryParams: { token: order.accessToken } });
+              },
+              error: () => (this.paymentStatus = "Payment verification failed")
+            });
+        },
+        prefill: {
+          name: this.customer.name,
+          email: this.customer.email || undefined,
+          contact: this.customer.phone
+        },
+        theme: { color: "#111" }
+      };
+
+      const rz = new (window as any).Razorpay(options);
+      rz.on("payment.failed", () => {
+        this.paymentStatus = "Payment failed";
+      });
+      rz.open();
+    } catch (e: any) {
+      this.paymentStatus = e?.message || "Payment failed";
+    } finally {
+      this.paying = false;
+    }
   }
 }

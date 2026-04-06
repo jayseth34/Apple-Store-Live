@@ -43,3 +43,16 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# backend
+/backend/node_modules
+/backend/dist
+/backend/.env
+/backend/data
+/backend/uploads/*
+!/backend/uploads/.gitkeep
+
+# angular cache
+/.angular/cache
+# backend db
+/backend/dev.db

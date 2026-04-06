@@ -13,7 +13,7 @@ interface Product {
 }
 
 interface Category {
-  id: number;
+  id: string | number;
   name: string;
   description: string;
   buttonText: string;
@@ -51,43 +51,40 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   scrollDots: number[] = [];
   @ViewChild('dealsScroll', { static: false }) dealsScrollElement!: ElementRef;
   activeDealsScrollIndex = 0;
-  dealsScrollDots: number[] = [];
-
-  // Hero Data
+  dealsScrollDots: number[] = [];  // Hero Data
   heroData = {
     large: {
-      title: 'Apple MacBook',
-      description: 'Built for Apple Intelligence.<br>Starting From ₹119900.00*',
-      buttonText: 'View Details'
+      title: 'Apple Accessories',
+      description: 'Low-cost essentials for your devices.<br>Power banks, covers, keyboards, mice and more.',
+      buttonText: 'Browse Products'
     },
     medium: {
-      title: 'iPhone 16 Pro',
-      description: 'Built for Apple Intelligence. Starting From ₹119900.00*',
+      title: 'Weekly Deals',
+      description: 'Save big on everyday accessories - limited stock, updated regularly.',
       buttonText: 'Shop Now'
     },
     small1: {
-      title: 'Apple Watch Ultra 2',
-      description: 'New finish. Never quit. Starting From ₹89900.00*',
-      buttonText: 'Shop Now',
-      background: 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)',
+      title: 'Fast Charging',
+      description: 'Power banks and charging essentials for daily use.',
+      buttonText: 'Shop Power',
+      background: 'linear-gradient(135deg, rgba(9, 132, 227, 0.85) 0%, rgba(9, 132, 227, 0.45) 100%), url(https://images.unsplash.com/photo-1616427592793-3c1f06f3a2c3?auto=format&fit=crop&w=1400&q=80)',
       color: 'white'
     },
     small2: {
-      title: 'iPad Air',
-      description: 'Unleash your creativity with the iPad. Starting From ₹59900.00*',
-      buttonText: 'Shop Now',
-      background: 'linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%)',
+      title: 'Protection',
+      description: 'Covers and cases to keep your device safe.',
+      buttonText: 'Shop Covers',
+      background: 'linear-gradient(135deg, rgba(253, 121, 168, 0.75) 0%, rgba(253, 203, 110, 0.45) 100%), url(https://images.unsplash.com/photo-1603317575587-6c5c5f2f1b8c?auto=format&fit=crop&w=1400&q=80)',
       color: 'white'
     },
     small3: {
-      title: 'iPad Air',
-      description: 'Unleash your creativity with the iPad. Starting From ₹59900.00*',
-      buttonText: 'Shop Now',
-      background: 'linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%)',
+      title: 'Audio & Fitness',
+      description: 'Earbuds and fitness bands on a budget.',
+      buttonText: 'Explore',
+      background: 'linear-gradient(135deg, rgba(0, 184, 148, 0.75) 0%, rgba(0, 184, 148, 0.35) 100%), url(https://images.unsplash.com/photo-1585386959984-a4155223168e?auto=format&fit=crop&w=1400&q=80)',
       color: 'white'
     }
   };
-
   // Features
   features: Feature[] = [
     { icon: 'fas fa-shipping-fast', title: 'Fast Shipping' },
@@ -95,264 +92,283 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     { icon: 'fas fa-headset', title: '24/7 Support' },
     { icon: 'fas fa-undo', title: 'Easy Returns' },
     { icon: 'fas fa-medal', title: 'Best Quality' }
-  ];
-
-  // Enhanced Categories with proper background images
+  ];  // Enhanced Categories (initial phase: accessories)
   categories: Category[] = [
     {
-      id: 1,
-      name: 'iPhones',
-      description: 'Experience the power of iPhone with cutting-edge technology, stunning cameras, and lightning-fast performance.',
+      id: 'power bank',
+      name: 'Power Bank',
+      description: 'Charge anywhere with affordable power banks.',
       buttonText: 'Shop Now',
-      backgroundImage: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=800&h=1200&fit=crop&crop=center',
-      icon: 'fas fa-mobile-alt',
-      displayText: 'iPHONE'
+      backgroundImage: 'https://images.unsplash.com/photo-1616427592793-3c1f06f3a2c3?w=800&h=1200&fit=crop&crop=center',
+      displayText: 'POWER'
     },
     {
-      id: 2,
-      name: 'iPad',
-      description: 'Unleash your creativity with the iPad—powerful performance, stunning display, and all-day battery life. Perfect for work, play, and everything in between!',
+      id: 'covers',
+      name: 'Covers',
+      description: 'Protect your device with low-cost cases and covers.',
       buttonText: 'Shop Now',
-      backgroundImage: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800&h=1200&fit=crop&crop=center',
-      icon: 'fas fa-tablet-alt',
-      displayText: 'iPAD'
+      backgroundImage: 'https://images.unsplash.com/photo-1603317575587-6c5c5f2f1b8c?w=800&h=1200&fit=crop&crop=center',
+      displayText: 'COVERS'
     },
     {
-      id: 3,
-      name: 'MacBook',
-      description: 'Power through your day with MacBook - featuring M-series chips, all-day battery life, and stunning Retina displays.',
+      id: 'keyboard',
+      name: 'Keyboard',
+      description: 'Wireless keyboards for tablets and laptops.',
       buttonText: 'Shop Now',
       backgroundImage: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&h=1200&fit=crop&crop=center',
-      icon: 'fas fa-laptop',
-      displayText: 'MacBook'
+      displayText: 'KEYS'
     },
     {
-      id: 4,
-      name: 'Apple Watch',
-      description: 'Stay connected and healthy with Apple Watch - your ultimate companion for fitness, communication, and style.',
+      id: 'mouse',
+      name: 'Mouse',
+      description: 'Comfortable mice for work and gaming.',
       buttonText: 'Shop Now',
-      backgroundImage: 'https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=800&h=1200&fit=crop&crop=center',
-      icon: 'fas fa-clock',
-      displayText: 'WATCH'
+      backgroundImage: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800&h=1200&fit=crop&crop=center',
+      displayText: 'MOUSE'
+    },
+    {
+      id: 'pencil',
+      name: 'Pencil',
+      description: 'Affordable stylus options for tablets.',
+      buttonText: 'Shop Now',
+      backgroundImage: 'https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?w=800&h=1200&fit=crop&crop=center',
+      displayText: 'PENCIL'
+    },
+    {
+      id: 'airpods',
+      name: 'AirPods',
+      description: 'Budget earbuds for everyday listening.',
+      buttonText: 'Shop Now',
+      backgroundImage: 'https://images.unsplash.com/photo-1585386959984-a4155223168e?w=800&h=1200&fit=crop&crop=center',
+      displayText: 'AUDIO'
+    },
+    {
+      id: 'whoop',
+      name: 'Whoop',
+      description: 'Fitness bands and trackers on a budget.',
+      buttonText: 'Shop Now',
+      backgroundImage: 'https://images.unsplash.com/photo-1550345332-09e3ac987658?w=800&h=1200&fit=crop&crop=center',
+      displayText: 'FIT'
+    },
+    {
+      id: 'controller',
+      name: 'Controller',
+      description: 'Bluetooth controllers for mobile and tablets.',
+      buttonText: 'Shop Now',
+      backgroundImage: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&h=1200&fit=crop&crop=center',
+      displayText: 'PLAY'
     }
-  ];
-
-  // Top Picks
+  ];  // Top Picks
   topPicksTitle = {
     main: 'Top picks,',
-    subtitle: 'discover our best selling favourites today.'
+    subtitle: 'our best selling accessories right now.'
   };
 
   topPicks = [
     {
       id: 1,
-      name: 'iPhone 16 Pro',
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      category: 'phones',
-      badge: '',
-      currentPrice: 119900,
-      originalPrice: 129900
+      name: 'MagSafe Power Bank (Compatible)',
+      image: 'https://images.unsplash.com/photo-1616427592793-3c1f06f3a2c3?w=1200&fit=crop&crop=center',
+      category: 'power bank',
+      badge: 'Deal',
+      currentPrice: 1999,
+      originalPrice: 2499
     },
     {
       id: 2,
-      name: 'iPad Air M2',
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      category: 'tablets',
+      name: 'Silicone Case Cover',
+      image: 'https://images.unsplash.com/photo-1603317575587-6c5c5f2f1b8c?w=1200&fit=crop&crop=center',
+      category: 'covers',
       badge: 'Popular',
-      currentPrice: 59900,
-      originalPrice: 64900
+      currentPrice: 599,
+      originalPrice: 999
     },
     {
       id: 3,
-      name: 'MacBook Air M3',
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      category: 'laptops',
-      badge: 'Best Seller',
-      currentPrice: 114900,
-      originalPrice: 119900
+      name: 'Wireless Keyboard (Mac Layout)',
+      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1200&fit=crop&crop=center',
+      category: 'keyboard',
+      badge: 'Top',
+      currentPrice: 1499,
+      originalPrice: 1999
     },
     {
       id: 4,
-      name: 'AirPods Pro 2',
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      category: 'audio',
-      badge: 'Hot',
-      currentPrice: 24900,
-      originalPrice: 26900
+      name: 'Wireless Mouse',
+      image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=1200&fit=crop&crop=center',
+      category: 'mouse',
+      badge: 'Value',
+      currentPrice: 999,
+      originalPrice: 1299
     },
     {
       id: 5,
-      name: 'Apple Watch Series 10',
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      category: 'watches',
-      badge: 'Latest',
-      currentPrice: 46900,
-      originalPrice: 49900
+      name: 'Stylus Pencil (Compatible)',
+      image: 'https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?w=1200&fit=crop&crop=center',
+      category: 'pencil',
+      badge: 'New',
+      currentPrice: 1299,
+      originalPrice: 1799
     },
     {
       id: 6,
-      name: 'Magic Keyboard',
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      category: 'accessories',
-      badge: 'Premium',
-      currentPrice: 10900,
-      originalPrice: 11900
+      name: 'True Wireless Earbuds',
+      image: 'https://images.unsplash.com/photo-1585386959984-a4155223168e?w=1200&fit=crop&crop=center',
+      category: 'airpods',
+      badge: 'Hot',
+      currentPrice: 1799,
+      originalPrice: 2499
     }
   ];
-
   // Featured Product
   featuredProduct = {
     id: 1,
-    subtitle: 'New Camera New Design',
-    title: 'iPhone 16 Pro Max',
-    description: 'Titanium. So Strong. So Light. So Pro.',
-    buttonText: 'Shop Now',
-    image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg'
+    subtitle: 'Limited stock',
+    title: 'MagSafe Power Bank (Compatible)',
+    description: 'Snap-on charging for your daily commute and travel.',
+    buttonText: 'Buy Now',
+    image: 'https://images.unsplash.com/photo-1616427592793-3c1f06f3a2c3?w=1400&fit=crop&crop=center'
   };
-
   // Hot Deals
   hotDealsTitle = {
     main: 'Hot Deals,',
-    subtitle: 'take a look at what\'s trending, right now.'
+    subtitle: 'grab these accessories before they sell out.'
   };
 
   hotDeals: Product[] = [
     {
-      id: 1,
-      name: 'Apple MacBook Air Laptop',
-      category: 'Hot Deals, MacBook',
-      description: 'Apple MacBook Air Laptop: Apple M1 chip, 13.3-inch/33.74 cm Retina Display, 8GB RAM, 256GB SSD Storage',
-      currentPrice: 54900,
-      originalPrice: 89900,
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      badge: '-39%'
-    },
-    {
       id: 2,
-      name: 'Apple iPad Air M2',
-      category: 'Hot Deals, iPad',
-      description: 'Apple iPad Air M2',
-      currentPrice: 54900,
-      originalPrice: 64900,
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      badge: '-17%'
+      name: 'Silicone Case Cover',
+      category: 'Covers',
+      description: 'Soft-touch case cover with comfortable grip.',
+      currentPrice: 599,
+      originalPrice: 999,
+      image: 'https://images.unsplash.com/photo-1603317575587-6c5c5f2f1b8c?w=1200&fit=crop&crop=center',
+      badge: '-40%'
     },
     {
       id: 3,
-      name: 'Apple MacBook Air 13(16GB, 256GB SSD)',
-      category: 'Hot Deals, MacBook',
-      currentPrice: 79900,
-      originalPrice: 89900,
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      badge: 'Sale!'
+      name: 'Wireless Keyboard (Mac Layout)',
+      category: 'Keyboard',
+      description: 'Compact wireless keyboard for tablets and laptops.',
+      currentPrice: 1499,
+      originalPrice: 1999,
+      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1200&fit=crop&crop=center',
+      badge: '-25%'
     },
     {
       id: 4,
-      name: 'Apple Watch Series 10 GPS+Cellular with Sport Band',
-      category: '10 Series, Watches',
-      currentPrice: 79900,
-      originalPrice: 84900,
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      badge: 'Sale!'
+      name: 'Wireless Mouse',
+      category: 'Mouse',
+      description: 'Ergonomic mouse for work and daily browsing.',
+      currentPrice: 999,
+      originalPrice: 1299,
+      image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=1200&fit=crop&crop=center',
+      badge: '-23%'
+    },
+    {
+      id: 6,
+      name: 'True Wireless Earbuds',
+      category: 'Audio',
+      description: 'Budget earbuds with charging case and clear sound.',
+      currentPrice: 1799,
+      originalPrice: 2499,
+      image: 'https://images.unsplash.com/photo-1585386959984-a4155223168e?w=1200&fit=crop&crop=center',
+      badge: '-28%'
     }
   ];
-
   // Some Products
   someProductsTitle = 'Some products';
   someProducts: Product[] = [
     {
       id: 1,
-      name: 'iPhone 16',
-      category: 'iPhone, iPhone 16',
-      currentPrice: 69900,
-      originalPrice: 103200,
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      badge: 'Sale!'
+      name: 'MagSafe Power Bank (Compatible)',
+      category: 'Power',
+      currentPrice: 1999,
+      originalPrice: 2499,
+      image: 'https://images.unsplash.com/photo-1616427592793-3c1f06f3a2c3?w=1200&fit=crop&crop=center',
+      badge: 'Deal'
     },
     {
-      id: 2,
-      name: 'iPhone 16 Pro',
-      category: 'iPhone, iPhone 16 pro',
-      currentPrice: 109900,
-      originalPrice: 159900,
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      badge: 'Sale!'
+      id: 5,
+      name: 'Stylus Pencil (Compatible)',
+      category: 'Pencil',
+      currentPrice: 1299,
+      originalPrice: 1799,
+      image: 'https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?w=1200&fit=crop&crop=center',
+      badge: 'New'
     }
   ];
-
   // Accessories Section
   accessoriesCards = [
     {
-      categoryId: 7,
-      title: 'Accessories',
-      description: 'Apple accessories enhance your devices with premium design, seamless integration, and advanced functionality.',
-      buttonText: 'Shop Now'
+      categoryId: 'covers',
+      title: 'Covers & Cases',
+      description: 'Everyday protection with clean looks and comfortable grip.',
+      buttonText: 'Shop Covers'
     },
     {
-      categoryId: 5,
-      title: 'AirPods',
-      description: 'Experience exceptional sound quality and seamless connectivity with Apple AirPods.',
-      buttonText: 'Explore'
+      categoryId: 'airpods',
+      title: 'Audio Essentials',
+      description: 'Budget earbuds for calls, music and workouts.',
+      buttonText: 'Explore Audio'
     }
   ];
-
   // Sidebar Data
   sidebarData = {
-    image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-    imageAlt: 'AppleCare',
+    image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=1200&fit=crop&crop=center',
+    imageAlt: 'Accessories',
     menuItems: [
-      { id: 0, name: 'All Categories', icon: 'fas fa-list' },
-      { id: 1, name: 'iPhones', icon: 'fas fa-mobile-alt' },
-      { id: 2, name: 'MacBook', icon: 'fas fa-laptop' },
-      { id: 3, name: 'iPads', icon: 'fas fa-tablet-alt' },
-      { id: 4, name: 'CTO', icon: 'fas fa-cogs' },
-      { id: 5, name: 'AirPods', icon: 'fas fa-headphones' },
-      { id: 6, name: 'watches', icon: 'fas fa-clock' },
-      { id: 7, name: 'Accessories', icon: 'fas fa-keyboard' }
+      { id: 'power bank', name: 'Power Bank', icon: 'fas fa-bolt' },
+      { id: 'covers', name: 'Covers', icon: 'fas fa-shield-alt' },
+      { id: 'keyboard', name: 'Keyboard', icon: 'fas fa-keyboard' },
+      { id: 'mouse', name: 'Mouse', icon: 'fas fa-mouse' },
+      { id: 'pencil', name: 'Pencil', icon: 'fas fa-pen' },
+      { id: 'airpods', name: 'Audio', icon: 'fas fa-headphones' },
+      { id: 'whoop', name: 'Fitness', icon: 'fas fa-heartbeat' },
+      { id: 'controller', name: 'Controller', icon: 'fas fa-gamepad' }
     ]
   };
-
   // Best Selling
   bestSellingTitle = 'Best-selling products';
   bestSellingProducts: Product[] = [
     {
-      id: 1,
-      name: 'Apple iPhone 16',
-      category: 'iPhone, iPhone 16',
-      currentPrice: 69900,
-      originalPrice: 103200,
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      badge: 'Sale!'
+      id: 2,
+      name: 'Silicone Case Cover',
+      category: 'Covers',
+      currentPrice: 599,
+      originalPrice: 999,
+      image: 'https://images.unsplash.com/photo-1603317575587-6c5c5f2f1b8c?w=1200&fit=crop&crop=center',
+      badge: 'Top'
     },
     {
-      id: 2,
-      name: 'Apple iPhone 16 pro',
-      category: 'iPhone, iPhone 16 pro',
-      currentPrice: 109900,
-      originalPrice: 159900,
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      badge: 'Sale!'
+      id: 1,
+      name: 'MagSafe Power Bank (Compatible)',
+      category: 'Power',
+      currentPrice: 1999,
+      originalPrice: 2499,
+      image: 'https://images.unsplash.com/photo-1616427592793-3c1f06f3a2c3?w=1200&fit=crop&crop=center',
+      badge: 'Deal'
+    },
+    {
+      id: 6,
+      name: 'True Wireless Earbuds',
+      category: 'Audio',
+      currentPrice: 1799,
+      originalPrice: 2499,
+      image: 'https://images.unsplash.com/photo-1585386959984-a4155223168e?w=1200&fit=crop&crop=center',
+      badge: 'Hot'
     },
     {
       id: 3,
-      name: 'Apple iPhone 15',
-      category: 'iPhone, iPhone 15',
-      currentPrice: 61900,
-      originalPrice: 89900,
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      badge: 'Sale!'
-    },
-    {
-      id: 4,
-      name: '60W USB-C To C Charge Cable (1m)',
-      category: 'Accessories',
-      currentPrice: 1805,
-      originalPrice: 1900,
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      badge: '-5%'
+      name: 'Wireless Keyboard (Mac Layout)',
+      category: 'Keyboard',
+      currentPrice: 1499,
+      originalPrice: 1999,
+      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1200&fit=crop&crop=center',
+      badge: 'Popular'
     }
   ];
-
   // Customers
   customersTitle = {
     main: 'Happy',
@@ -362,24 +378,23 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   customers: Customer[] = [
     {
       type: 'testimonial',
-      name: 'John Doe',
-      testimonial: 'The service was outstanding. I am very happy with my new MacBook Air. The whole process was smooth and easy. Highly recommend!',
+      name: 'Verified Buyer',
+      testimonial: 'Great quality for the price. The cover fits perfectly and delivery was quick.',
       status: 'Verified Customer'
     },
     {
       type: 'image',
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      title: 'NEW IPHONE 16 PLUS',
+      image: 'https://images.unsplash.com/photo-1603317575587-6c5c5f2f1b8c?w=1200&fit=crop&crop=center',
+      title: 'NEW COVER ARRIVAL',
       description: 'Customer feedback...'
     },
     {
       type: 'image',
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      title: 'HAPPY CUSTOMER NEW MACBOOK AIR M1',
+      image: 'https://images.unsplash.com/photo-1585386959984-a4155223168e?w=1200&fit=crop&crop=center',
+      title: 'EARBUDS DELIVERED',
       description: 'Customer feedback...'
     }
   ];
-
   // WhatsApp
   whatsappLink = 'https://wa.me/1234567890';
   whatsappText = 'Contact Us';
@@ -419,8 +434,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate(['/product', productId]);
   }
 
-  navigateToCategory(categoryId: number): void {
-    this.router.navigate(['/products'], { queryParams: { category: categoryId } });
+  navigateToCategory(categoryId: any): void {
+    const category = typeof categoryId === "string" ? categoryId : undefined;
+    this.router.navigate(["/products"], { queryParams: category ? { category } : {} });
   }
 
   initAnimations(): void {
@@ -451,14 +467,14 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // Enhanced Category Methods
-  onCategoryHover(categoryId: number): void {
+  onCategoryHover(categoryId: string | number): void {
     const categoryCard = document.querySelector(`[data-category="${categoryId}"]`) as HTMLElement;
     if (categoryCard) {
       categoryCard.classList.add('hovered');
     }
   }
 
-  onCategoryLeave(categoryId: number): void {
+  onCategoryLeave(categoryId: string | number): void {
     const categoryCard = document.querySelector(`[data-category="${categoryId}"]`) as HTMLElement;
     if (categoryCard) {
       categoryCard.classList.remove('hovered');

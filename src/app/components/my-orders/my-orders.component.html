@@ -1,0 +1,43 @@
+<div class="page">
+  <div class="top">
+    <h2>My Orders</h2>
+    <div class="actions">
+      <button class="btn-outline" type="button" (click)="goShop()">Continue shopping</button>
+      <button class="btn-outline" type="button" (click)="refresh(true)">Refresh</button>
+      <button class="btn-danger" type="button" (click)="clearAll()" [disabled]="stored.length === 0">Clear</button>
+    </div>
+  </div>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Loading...</p>
+
+  <div class="empty" *ngIf="!loading && stored.length === 0">
+    <div class="title">No orders yet</div>
+    <div class="sub">After checkout, your orders appear here automatically.</div>
+  </div>
+
+  <div class="list" *ngIf="!loading && stored.length > 0">
+    <div class="card" *ngFor="let s of stored">
+      <div class="left">
+        <div class="title">
+          {{ detailFor(s)?.product?.name || s.productName || ('Order ' + s.publicId) }}
+        </div>
+        <div class="meta">
+          <span class="pill">Status: {{ detailFor(s)?.status || 'UNKNOWN' }}</span>
+          <span class="pill">Payment: {{ (detailFor(s)?.isPaid || !!detailFor(s)?.razorpayPaymentId) ? 'PAID' : 'NOT PAID' }}</span>
+          <span class="pill" *ngIf="detailFor(s)?.amountPaise">&#8377;{{ inr(detailFor(s)?.amountPaise) | number: '1.0-2' }}</span>
+        </div>
+
+        <div class="sub" *ngIf="detailFor(s)">
+          Deliver to: {{ detailFor(s)?.shippingAddress1 }}, {{ detailFor(s)?.city }}, {{ detailFor(s)?.state }} {{ detailFor(s)?.pincode }}
+        </div>
+        <div class="sub" *ngIf="!detailFor(s)">Tracking ID: {{ s.publicId }}</div>
+      </div>
+
+      <div class="right">
+        <button class="btn-primary" type="button" (click)="track(s)">Track</button>
+        <button class="btn-outline" type="button" (click)="remove(s)">Remove</button>
+      </div>
+    </div>
+  </div>
+</div>

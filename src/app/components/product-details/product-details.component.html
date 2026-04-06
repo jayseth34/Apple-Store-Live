@@ -1,103 +1,96 @@
-<!-- Breadcrumb -->
-<section class="breadcrumb-section">
+<section class="page-header">
   <div class="container">
-    <div class="d-flex justify-content-between align-items-center">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
-          <li class="breadcrumb-item"><a routerLink="/products">iPhone</a></li>
-          <li class="breadcrumb-item active">{{product?.name}}</li>
-        </ol>
-      </nav>
-      <div class="prev-next">
-        <a href="#"><i class="fas fa-chevron-left"></i> PREVIOUS</a>
-        <a href="#">NEXT <i class="fas fa-chevron-right"></i></a>
+    <a routerLink="/products">← Back to products</a>
+  </div>
+</section>
+
+<section class="products-section">
+  <div class="container">
+    <p *ngIf="loading">Loading...</p>
+    <p *ngIf="error" style="color: #b00020">{{ error }}</p>
+
+    <div *ngIf="product" class="product-details">
+      <div class="left">
+        <img [src]="displayImageUrl()" [alt]="product.name" loading="lazy" />
+      </div>
+
+      <div class="right">
+        <div class="product-category">{{ product.category }}</div>
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+
+        <div class="product-price">
+          <span class="current-price">&#8377;{{ inr(product.pricePaise) | number: '1.0-2' }}</span>
+          <span class="original-price" *ngIf="product.compareAtPricePaise">
+            &#8377;{{ inr(product.compareAtPricePaise!) | number: '1.0-2' }}
+          </span>
+        </div>
+
+        <div class="qty">
+          <button type="button" (click)="decreaseQuantity()">-</button>
+          <span>{{ quantity }}</span>
+          <button type="button" (click)="increaseQuantity()">+</button>
+        </div>
+
+        <div class="checkout-card">
+          <div class="checkout-head">
+            <h3>Delivery details</h3>
+            <span class="hint">Saved on this device</span>
+          </div>
+
+          <div class="form-grid">
+            <div>
+              <label>Name</label>
+              <input [(ngModel)]="customer.name" (ngModelChange)="saveCustomer()" placeholder="Full name" />
+            </div>
+            <div>
+              <label>Phone</label>
+              <input [(ngModel)]="customer.phone" (ngModelChange)="saveCustomer()" placeholder="Phone number" />
+            </div>
+            <div class="full">
+              <label>Email (optional)</label>
+              <input [(ngModel)]="customer.email" (ngModelChange)="saveCustomer()" placeholder="Email" />
+            </div>
+            <div class="full">
+              <label>Address line 1</label>
+              <input [(ngModel)]="customer.address1" (ngModelChange)="saveCustomer()" placeholder="House / Street" />
+            </div>
+            <div class="full">
+              <label>Address line 2 (optional)</label>
+              <input [(ngModel)]="customer.address2" (ngModelChange)="saveCustomer()" placeholder="Area / Landmark" />
+            </div>
+            <div>
+              <label>City</label>
+              <input [(ngModel)]="customer.city" (ngModelChange)="saveCustomer()" placeholder="City" />
+            </div>
+            <div>
+              <label>State</label>
+              <input [(ngModel)]="customer.state" (ngModelChange)="saveCustomer()" placeholder="State" />
+            </div>
+            <div>
+              <label>Pincode</label>
+              <input [(ngModel)]="customer.pincode" (ngModelChange)="saveCustomer()" placeholder="Pincode" />
+            </div>
+            <div>
+              <label>Country</label>
+              <input [(ngModel)]="customer.country" (ngModelChange)="saveCustomer()" placeholder="IN" />
+            </div>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <button class="btn-secondary" type="button" (click)="addToCart()" [disabled]="!product || product.stock <= 0">
+            {{ addedToCart ? 'Added!' : 'Add to cart' }}
+          </button>
+          <button class="btn-primary" type="button" (click)="buyNow()" [disabled]="paying || product.stock <= 0">
+            {{ product.stock <= 0 ? 'Out of stock' : (paying ? 'Opening payment...' : 'Buy now') }}
+          </button>
+        </div>
+
+        <button class="btn-link" type="button" (click)="goCart()" *ngIf="addedToCart">Go to cart</button>
+
+        <p *ngIf="paymentStatus" style="margin-top: 10px">{{ paymentStatus }}</p>
       </div>
     </div>
   </div>
 </section>
-
-<!-- Product Detail -->
-<section class="product-detail-section" *ngIf="product">
-  <div class="container">
-    <div class="row">
-      <!-- Product Gallery -->
-      <div class="col-lg-6 mb-5">
-        <div class="d-flex">
-          <div class="product-thumbnails">
-            <div class="thumbnail" 
-                 *ngFor="let image of product.images; let i = index"
-                 [class.active]="selectedImageIndex === i"
-                 (click)="selectImage(i)">
-              <img [src]="image" [alt]="product.name">
-            </div>
-          </div>
-          <div class="flex-grow-1">
-            <div class="main-product-image">
-              <div class="sale-badge" *ngIf="product.discount">-{{product.discount}}%</div>
-              <img [src]="product.images[selectedImageIndex]" [alt]="product.name">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Product Info -->
-      <div class="col-lg-6">
-        <div class="product-info">
-          <h1>{{product.name}}</h1>
-          <div class="product-price">
-            <span class="current-price">₹{{product.currentPrice | number}}.00</span>
-            <span class="original-price" *ngIf="product.originalPrice">₹{{product.originalPrice | number}}.00</span>
-          </div>
-
-          <!-- Color Selection -->
-          <div class="color-selection">
-            <span class="color-label">COLOR: <span>{{selectedColor.toUpperCase()}}</span></span>
-            <div class="color-options">
-              <div class="color-option"
-                   *ngFor="let color of product.colors"
-                   [class]="color.name"
-                   [class.active]="selectedColor === color.name"
-                   (click)="selectColor(color.name)">
-              </div>
-            </div>
-          </div>
-
-          <!-- Storage Selection -->
-          <div class="storage-selection">
-            <span class="storage-label">STORAGE: <span>{{selectedStorage}}</span></span>
-            <div class="storage-options">
-              <div class="storage-option"
-                   *ngFor="let storage of product.storageOptions"
-                   [class.active]="selectedStorage === storage.size"
-                   (click)="selectStorage(storage)">
-                {{storage.size}}
-              </div>
-            </div>
-          </div>
-
-          <!-- Price Display -->
-          <div class="price-display">
-            <div class="final-price">₹{{finalPrice | number}}.00</div>
-          </div>
-
-          <!-- Quantity and Add to Cart -->
-          <div class="quantity-selector">
-            <div class="quantity-controls">
-              <button class="quantity-btn" (click)="decreaseQuantity()">-</button>
-              <input type="number" class="quantity-input" [(ngModel)]="quantity" min="1">
-              <button class="quantity-btn" (click)="increaseQuantity()">+</button>
-            </div>
-          </div>
-
-          <button class="add-to-cart-btn" (click)="addToCart()">ADD TO CART</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- WhatsApp Button -->
-<a href="https://wa.me/1234567890" class="whatsapp-btn">
-  <i class="fab fa-whatsapp"></i>Contact Us
-</a>

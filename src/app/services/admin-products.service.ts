@@ -1,0 +1,50 @@
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { environment } from "../../environments/environment";
+import { Product } from "../models/product";
+
+export type ProductUpsertInput = {
+  name: string;
+  category: string;
+  description: string;
+  pricePaise: number;
+  compareAtPricePaise?: number;
+  stock: number;
+  isActive: boolean;
+  image?: File | null;
+};
+
+@Injectable({ providedIn: "root" })
+export class AdminProductsService {
+  constructor(private http: HttpClient) {}
+
+  create(input: ProductUpsertInput) {
+    const fd = this.toFormData(input);
+    return this.http.post<Product>(`${environment.apiBaseUrl}/api/admin/products`, fd);
+  }
+
+  update(id: number, input: Partial<ProductUpsertInput>) {
+    const fd = this.toFormData(input);
+    return this.http.put<Product>(`${environment.apiBaseUrl}/api/admin/products/${id}`, fd);
+  }
+
+  delete(id: number) {
+    return this.http.delete<{ ok: true }>(`${environment.apiBaseUrl}/api/admin/products/${id}`);
+  }
+
+  private toFormData(input: Partial<ProductUpsertInput>) {
+    const fd = new FormData();
+    if (input.name != null) fd.append("name", input.name);
+    if (input.category != null) fd.append("category", input.category);
+    if (input.description != null) fd.append("description", input.description);
+    if (input.pricePaise != null) fd.append("pricePaise", String(input.pricePaise));
+    if (input.compareAtPricePaise != null) fd.append("compareAtPricePaise", String(input.compareAtPricePaise));
+    if (input.compareAtPricePaise === undefined && (input as any).compareAtPricePaise === undefined) {
+      // do nothing
+    }
+    if (input.stock != null) fd.append("stock", String(input.stock));
+    if (input.isActive != null) fd.append("isActive", String(input.isActive));
+    if (input.image) fd.append("image", input.image);
+    return fd;
+  }
+}

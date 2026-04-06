@@ -1,0 +1,86 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="title">
+      <h1>Products</h1>
+      <p>Manage your accessory catalog and stock.</p>
+    </div>
+
+    <div class="header-actions">
+      <input class="search" type="text" [(ngModel)]="query" placeholder="Search products..." />
+      <button class="btn-outline" routerLink="/admin/orders">Orders</button>
+      <button class="btn" (click)="newProduct()">Add product</button>
+    </div>
+  </div>
+
+  <div class="banner" *ngIf="!loading">
+    <div class="meta">Showing <b>{{ filteredProducts.length }}</b> of <b>{{ products.length }}</b></div>
+  </div>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+  <p class="loading" *ngIf="loading">Loading...</p>
+
+  <!-- Desktop table -->
+  <div class="table admin-desktop" *ngIf="!loading">
+    <div class="thead">
+      <div>Product</div>
+      <div>Category</div>
+      <div class="num">Price</div>
+      <div class="num">Stock</div>
+      <div class="num">Actions</div>
+    </div>
+
+    <div class="trow" *ngFor="let p of filteredProducts">
+      <div class="product">
+        <img *ngIf="imageUrl(p)" [src]="imageUrl(p)" alt="" />
+        <div class="thumb" *ngIf="!imageUrl(p)">No image</div>
+        <div>
+          <div class="pname">{{ p.name }}</div>
+          <div class="psub">#{{ p.id }}</div>
+        </div>
+      </div>
+      <div>
+        <span class="chip">{{ p.category }}</span>
+      </div>
+      <div class="num price">&#8377;{{ inr(p.pricePaise) | number: '1.0-2' }}</div>
+      <div class="num">
+        <span class="stock" [class.low]="p.stock <= 5">{{ p.stock }}</span>
+      </div>
+      <div class="num actions">
+        <button class="btn-outline" (click)="edit(p)">Edit</button>
+        <button class="btn-danger" (click)="remove(p)">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile cards -->
+  <div class="cards admin-mobile" *ngIf="!loading">
+    <div class="card" *ngFor="let p of filteredProducts">
+      <div class="card-top">
+        <div class="product">
+          <img *ngIf="imageUrl(p)" [src]="imageUrl(p)" alt="" />
+          <div class="thumb" *ngIf="!imageUrl(p)">No image</div>
+          <div>
+            <div class="pname">{{ p.name }}</div>
+            <div class="psub">#{{ p.id }} &middot; <span class="chip">{{ p.category }}</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-grid">
+        <div>
+          <div class="label">Price</div>
+          <div class="value">&#8377;{{ inr(p.pricePaise) | number: '1.0-2' }}</div>
+        </div>
+        <div>
+          <div class="label">Stock</div>
+          <div class="value"><span class="stock" [class.low]="p.stock <= 5">{{ p.stock }}</span></div>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-outline" (click)="edit(p)">Edit</button>
+        <button class="btn-danger" (click)="remove(p)">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

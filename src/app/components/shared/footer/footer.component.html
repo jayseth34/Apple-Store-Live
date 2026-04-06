@@ -5,7 +5,7 @@
       <div class="footer-column">
         <div class="footer-brand">
           <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple Store">
-          <p>Experience the magic of Apple products with cutting-edge technology and innovative designs.</p>
+          <p>Low-cost Apple-compatible accessories for everyday use.</p>
           <div class="social-links">
             <a href="#"><i class="fab fa-facebook-f"></i></a>
             <a href="#"><i class="fab fa-twitter"></i></a>
@@ -15,14 +15,16 @@
         </div>
       </div>
       <div class="footer-column">
-        <h4>Products</h4>
+        <h4>Categories</h4>
         <ul class="footer-links">
-          <li><a href="#">iPhone</a></li>
-          <li><a href="#">iPad</a></li>
-          <li><a href="#">Mac</a></li>
-          <li><a href="#">Watch</a></li>
-          <li><a href="#">AirPods</a></li>
-          <li><a href="#">Accessories</a></li>
+          <li><a routerLink="/products" [queryParams]="{category: 'power bank'}">Power Bank</a></li>
+          <li><a routerLink="/products" [queryParams]="{category: 'covers'}">Covers</a></li>
+          <li><a routerLink="/products" [queryParams]="{category: 'keyboard'}">Keyboard</a></li>
+          <li><a routerLink="/products" [queryParams]="{category: 'mouse'}">Mouse</a></li>
+          <li><a routerLink="/products" [queryParams]="{category: 'pencil'}">Pencil</a></li>
+          <li><a routerLink="/products" [queryParams]="{category: 'airpods'}">Audio</a></li>
+          <li><a routerLink="/products" [queryParams]="{category: 'whoop'}">Fitness</a></li>
+          <li><a routerLink="/products" [queryParams]="{category: 'controller'}">Controller</a></li>
         </ul>
       </div>
       <div class="footer-column">
@@ -49,7 +51,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2025 The Apple Store. All rights reserved.</p>
+      <p>&copy; 2026 Apple Store Live. All rights reserved.</p>
     </div>
   </div>
 </footer>

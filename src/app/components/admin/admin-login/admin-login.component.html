@@ -1,0 +1,14 @@
+<div class="admin-auth">
+  <h2>Admin Login</h2>
+
+  <div class="card">
+    <label>Password</label>
+    <input type="password" [(ngModel)]="password" placeholder="Admin password" />
+
+    <button class="btn" (click)="login()" [disabled]="loading || !password">
+      {{ loading ? "Signing in..." : "Sign in" }}
+    </button>
+
+    <p class="error" *ngIf="error">{{ error }}</p>
+  </div>
+</div>

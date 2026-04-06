@@ -1,0 +1,74 @@
+<section class="page-header">
+  <div class="container" style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+    <a (click)="backToProducts()" style="cursor: pointer">&larr; Back to products</a>
+    <button class="btn-outline" type="button" (click)="refresh(true)">Refresh</button>
+  </div>
+</section>
+
+<section class="products-section">
+  <div class="container">
+    <p *ngIf="loading">Loading...</p>
+    <p *ngIf="error" style="color: #b00020">{{ error }}</p>
+
+    <div *ngIf="order" class="card">
+      <div class="title">Order Status</div>
+      <div class="status">{{ statusLabel(order.status) }}</div>
+
+      <div class="timeline" *ngIf="order.status !== 'CANCELLED'">
+        <div class="bar">
+          <div class="fill" [style.width.%]="progressPct()"></div>
+        </div>
+        <div class="steps">
+          <div class="step" *ngFor="let s of steps; let i = index" [class.done]="stepIndex() > i" [class.active]="stepIndex() === i">
+            {{ stepLabel(s) }}
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <div class="label">Tracking ID</div>
+          <div class="value">{{ order.publicId || order.id }}</div>
+        </div>
+        <div>
+          <div class="label">Amount</div>
+          <div class="value">&#8377;{{ inr(order.amountPaise) | number: '1.0-2' }}</div>
+        </div>
+        <div>
+          <div class="label">Payment</div>
+          <div class="value">{{ paidLabel() }}</div>
+        </div>
+        <div>
+          <div class="label">Items</div>
+          <div class="value">
+            <div *ngFor="let it of (order.items || [])">
+              {{ it.quantity }} × {{ it.product?.name || ('Product #' + it.productId) }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="label">Delivery address</div>
+        <div class="value">
+          <div>{{ order.customerName }}</div>
+          <div>{{ order.customerPhone }}</div>
+          <div>{{ order.shippingAddress1 }}</div>
+          <div *ngIf="order.shippingAddress2">{{ order.shippingAddress2 }}</div>
+          <div>{{ order.city }}, {{ order.state }} {{ order.pincode }}</div>
+          <div>{{ order.country }}</div>
+        </div>
+      </div>
+
+      <div class="section" *ngIf="order.razorpayOrderId">
+        <div class="label">Razorpay</div>
+        <div class="value">
+          <div>Order: {{ order.razorpayOrderId }}</div>
+          <div>Payment: {{ order.razorpayPaymentId || '-' }}</div>
+        </div>
+      </div>
+
+      <p class="note">Auto-refreshes every 5 seconds.</p>
+    </div>
+  </div>
+</section>

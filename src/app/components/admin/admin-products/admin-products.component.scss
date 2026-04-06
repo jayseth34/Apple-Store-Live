@@ -1,0 +1,272 @@
+.admin-page {
+  max-width: 1200px;
+  margin: 18px auto 40px;
+  padding: 0 16px;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 18px 0 12px;
+}
+
+.title h1 {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+
+.title p {
+  margin: 6px 0 0;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.search {
+  width: min(360px, 80vw);
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #fff;
+}
+
+.banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 14px;
+}
+
+.meta {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.table {
+  margin-top: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.thead,
+.trow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 0.8fr 1.1fr;
+  gap: 12px;
+  padding: 12px;
+  align-items: center;
+}
+
+.thead {
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.trow {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.product {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+img {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px dashed rgba(0, 0, 0, 0.18);
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  color: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.pname {
+  font-weight: 700;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 520px;
+}
+
+.psub {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.02);
+  font-size: 12px;
+}
+
+.num {
+  text-align: right;
+}
+
+.price {
+  font-weight: 700;
+}
+
+.stock {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(52, 199, 89, 0.08);
+}
+
+.stock.low {
+  background: rgba(255, 149, 0, 0.12);
+  border-color: rgba(255, 149, 0, 0.25);
+}
+
+.actions {
+  display: inline-flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.btn {
+  border: none;
+  border-radius: 12px;
+  background: #111;
+  color: #fff;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.btn-outline {
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 12px;
+  background: #fff;
+  padding: 10px 12px;
+  cursor: pointer;
+  color: #111;
+}
+
+.btn-danger {
+  border: 1px solid rgba(176, 0, 32, 0.35);
+  border-radius: 12px;
+  background: rgba(176, 0, 32, 0.07);
+  padding: 10px 12px;
+  cursor: pointer;
+  color: #b00020;
+}
+
+.error {
+  margin-top: 10px;
+  color: #b00020;
+}
+
+.loading {
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+/* Responsive */
+.table.admin-desktop {
+  display: block;
+}
+
+.cards.admin-mobile {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .table.admin-desktop {
+    display: none;
+  }
+
+  .cards.admin-mobile {
+    display: grid;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .search {
+    width: 100%;
+  }
+}
+
+.cards {
+  margin-top: 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.card-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.label {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-bottom: 6px;
+}
+
+.value {
+  font-weight: 700;
+}
+
+.card-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.card-actions button {
+  flex: 1;
+}
+

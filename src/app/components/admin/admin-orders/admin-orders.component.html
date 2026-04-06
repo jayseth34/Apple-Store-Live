@@ -1,0 +1,65 @@
+<div class="admin-page">
+  <div class="topbar">
+    <h2>Admin Orders</h2>
+    <button class="btn-outline" (click)="goProducts()">Products</button>
+  </div>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Loading...</p>
+
+  <div class="table" *ngIf="!loading">
+    <div class="row header">
+      <div>Order</div>
+      <div>Customer</div>
+      <div>Delivery</div>
+      <div>Product</div>
+      <div>Amount</div>
+      <div>Status</div>
+      <div>Payment</div>
+    </div>
+
+    <div class="row" *ngFor="let o of orders">
+      <div>
+        <div class="title">#{{ o.id }}</div>
+        <div class="sub">{{ o.createdAt | date: 'medium' }}</div>
+        <div class="sub" *ngIf="o.publicId">Track: {{ o.publicId }}</div>
+      </div>
+
+      <div>
+        <div class="title">{{ o.customerName || '-' }}</div>
+        <div class="sub">{{ o.customerPhone || '-' }}</div>
+        <div class="sub" *ngIf="o.customerEmail">{{ o.customerEmail }}</div>
+      </div>
+
+      <div class="sub">
+        <div>{{ o.shippingAddress1 || '-' }}</div>
+        <div *ngIf="o.shippingAddress2">{{ o.shippingAddress2 }}</div>
+        <div>{{ o.city || '-' }}, {{ o.state || '-' }} {{ o.pincode || '' }}</div>
+      </div>
+
+      <div class="name">
+        <img *ngIf="imageUrl(o)" [src]="imageUrl(o)" alt="" />
+        <div>
+          <div class="title">{{ productName(o) }}</div>
+          <div class="sub">Qty: {{ o.quantity }}</div>
+          <div class="sub" *ngIf="o.items?.length">Items: {{ itemsLabel(o) }}</div>
+        </div>
+      </div>
+
+      <div>&#8377;{{ inr(o.amountPaise) | number: '1.0-2' }}</div>
+
+      <div>
+        <select [value]="o.status" (change)="setStatus(o, $any($event.target).value)">
+          <option *ngFor="let s of statuses" [value]="s">{{ statusLabel(s) }}</option>
+          <option [value]="o.status" *ngIf="statuses.indexOf(o.status) === -1">{{ o.status }}</option>
+        </select>
+      </div>
+
+      <div>
+        <div class="title">{{ o.isPaid ? 'PAID' : 'NOT PAID' }}</div>
+        <div class="sub">RP order: {{ o.razorpayOrderId || '-' }}</div>
+        <div class="sub">RP payment: {{ o.razorpayPaymentId || '-' }}</div>
+      </div>
+    </div>
+  </div>
+</div>

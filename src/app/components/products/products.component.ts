@@ -1,88 +1,72 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-
-interface Product {
-  id: number;
-  name: string;
-  category: string;
-  description: string;
-  currentPrice: number;
-  originalPrice?: number;
-  discount?: number;
-  image: string;
-  badge: string;
-  badgeClass: string;
-  outOfStock: boolean;
-  inWishlist: boolean;
-}
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { environment } from "../../../environments/environment";
+import { Product, fallbackImageForCategory, paiseToInr } from "../../models/product";
+import { CartService } from "../../services/cart.service";
+import { ProductsService } from "../../services/products.service";
 
 @Component({
-  selector: 'app-products',
-  templateUrl: './products.component.html',
-  styleUrls: ['./products.component.css']
+  selector: "app-products",
+  templateUrl: "./products.component.html",
+  styleUrls: ["./products.component.css"]
 })
 export class ProductsComponent implements OnInit {
+  products: Product[] = [];
+  loading = false;
+  error: string | null = null;
+  activeCategory: string | null = null;
 
-  products: Product[] = [
-    {
-      id: 1,
-      name: 'Apple iPhone 13',
-      category: 'iPhone, iPhone 13',
-      description: 'iPhone 13. The most advanced dual-camera system ever on iPhone. Lightning-fast A15 Bionic chip.',
-      currentPrice: 44900,
-      originalPrice: 54900,
-      discount: 18,
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      badge: 'Sale!',
-      badgeClass: 'sale',
-      outOfStock: false,
-      inWishlist: false
-    },
-    {
-      id: 2,
-      name: 'Apple iPhone 15 Plus',
-      category: 'iPhone, iPhone 15 plus',
-      description: 'iPhone 15 Plus. Dynamic Island. 48MP Main camera. All-day battery life.',
-      currentPrice: 69900,
-      originalPrice: 79900,
-      discount: 13,
-      image: 'https://images.macrumors.com/t/SmIQxxD8PeNRatir3RFKfqT519g=/3532x/article-new/2023/09/iPhone-16-Side-2-Feature.jpg',
-      badge: 'Sale!',
-      badgeClass: 'sale',
-      outOfStock: false,
-      inWishlist: false
-    }
-    // Add more products here...
-  ];
-
-  constructor(private router: Router) { }
+  constructor(
+    private productsApi: ProductsService,
+    private cart: CartService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.initAnimations();
+    this.route.queryParamMap.subscribe((m) => {
+      this.activeCategory = m.get("category");
+      this.load();
+    });
   }
 
-  onSortChange(event: any): void {
-    const sortValue = event.target.value;
-    // Implement sorting logic here
-    console.log('Sorting by:', sortValue);
+  load(): void {
+    this.loading = true;
+    this.error = null;
+
+    this.productsApi.list({ category: this.activeCategory || undefined }).subscribe({
+      next: (products) => {
+        this.products = products;
+        this.loading = false;
+      },
+      error: () => {
+        this.error = "Failed to load products";
+        this.loading = false;
+      }
+    });
   }
 
-  addToCart(product: Product): void {
-    if (!product.outOfStock) {
-      console.log('Added to cart:', product.name);
-      // Implement add to cart logic
-    }
+  imageUrl(p: Product) {
+    if (!p.imagePath) return fallbackImageForCategory(p.category);
+    if (p.imagePath.startsWith("http")) return p.imagePath;
+    if (p.imagePath.startsWith("/")) return `${environment.apiBaseUrl}${p.imagePath}`;
+    return `${environment.apiBaseUrl}/${p.imagePath}`;
   }
 
-  toggleWishlist(product: Product): void {
-    product.inWishlist = !product.inWishlist;
+  inr(paise: number) {
+    return paiseToInr(paise);
   }
 
-  goToProductDetails(productId: number): void {
-    this.router.navigate(['/product', productId]);
+  view(productId: number): void {
+    this.router.navigate(["/product", productId]);
   }
 
-  initAnimations(): void {
-    // Copy animation code from home component
+  addToCart(product: Product, event: MouseEvent) {
+    event.stopPropagation();
+    this.cart.add(product.id, 1);
+  }
+
+  onSortChange(_event: any): void {
+    // optional later
   }
 }

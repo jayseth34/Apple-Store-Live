@@ -10,28 +10,28 @@
             <div class="hero-card hero-card-medium">
                 <h3>{{heroData.medium.title}}</h3>
                 <p>{{heroData.medium.description}}</p>
-                <a routerLink="/products" class="btn-link">{{heroData.medium.buttonText}} →</a>
+                <a routerLink="/products" class="btn-link">{{heroData.medium.buttonText}} &rarr;</a>
             </div>
             <div class="hero-card hero-card-small" [style.background]="heroData.small1.background"
                 [style.color]="heroData.small1.color">
                 <h3>{{heroData.small1.title}}</h3>
                 <p>{{heroData.small1.description}}</p>
                 <a routerLink="/products" class="btn-link"
-                    [style.color]="heroData.small1.color">{{heroData.small1.buttonText}} →</a>
+                    [style.color]="heroData.small1.color">{{heroData.small1.buttonText}} &rarr;</a>
             </div>
             <div class="hero-card hero-card-small" [style.background]="heroData.small2.background"
                 [style.color]="heroData.small2.color">
                 <h3>{{heroData.small2.title}}</h3>
                 <p>{{heroData.small2.description}}</p>
                 <a routerLink="/products" class="btn-link"
-                    [style.color]="heroData.small2.color">{{heroData.small2.buttonText}} →</a>
+                    [style.color]="heroData.small2.color">{{heroData.small2.buttonText}} &rarr;</a>
             </div>
             <div class="hero-card hero-card-small" [style.background]="heroData.small3.background"
                 [style.color]="heroData.small3.color">
                 <h3>{{heroData.small3.title}}</h3>
                 <p>{{heroData.small3.description}}</p>
                 <a routerLink="/products" class="btn-link"
-                    [style.color]="heroData.small3.color">{{heroData.small3.buttonText}} →</a>
+                    [style.color]="heroData.small3.color">{{heroData.small3.buttonText}} &rarr;</a>
             </div>
         </div>
     </section>
@@ -102,7 +102,7 @@
 
         <div class="picks-scroll" #picksScroll>
             <div class="pick-item" *ngFor="let pick of topPicks" [attr.data-category]="pick.category"
-                (click)="navigateToCategory(pick.id)">
+                (click)="navigateToProduct(pick.id)">
 
                 <!-- Image Container with Enhanced Effects -->
                 <div class="pick-image-container">
@@ -113,8 +113,8 @@
                 <div class="pick-item-content">
                     <p>{{pick.name}}</p>
                     <div class="pick-price" *ngIf="pick.currentPrice">
-                        <span class="current-price">₹{{pick.currentPrice | number}}</span>
-                        <span class="old-price" *ngIf="pick.originalPrice">₹{{pick.originalPrice | number}}</span>
+                        <span class="current-price">&#8377;{{pick.currentPrice | number}}</span>
+                        <span class="old-price" *ngIf="pick.originalPrice">&#8377;{{pick.originalPrice | number}}</span>
                     </div>
                 </div>
             </div>
@@ -170,8 +170,8 @@
                     <h4>{{deal.name}}</h4>
                     <p *ngIf="deal.description">{{deal.description}}</p>
                     <div class="deal-price">
-                        ₹{{deal.currentPrice | number}}.00
-                        <span class="deal-price-old" *ngIf="deal.originalPrice">₹{{deal.originalPrice |
+                        &#8377;{{deal.currentPrice | number}}.00
+                        <span class="deal-price-old" *ngIf="deal.originalPrice">&#8377;{{deal.originalPrice |
                             number}}.00</span>
                     </div>
                 </div>
@@ -199,8 +199,8 @@
                         <p>{{product.category}}</p>
                         <h4>{{product.name}}</h4>
                         <div class="deal-price">
-                            ₹{{product.currentPrice | number}}.00
-                            <span class="deal-price-old">₹{{product.originalPrice | number}}.00</span>
+                            &#8377;{{product.currentPrice | number}}.00
+                            <span class="deal-price-old">&#8377;{{product.originalPrice | number}}.00</span>
                         </div>
                     </div>
                 </div>
@@ -242,8 +242,8 @@
                         <p style="color: var(--apple-text-secondary); font-size: 12px;">{{product.category}}</p>
                         <h4>{{product.name}}</h4>
                         <div class="deal-price">
-                            ₹{{product.currentPrice | number}}.00
-                            <span class="deal-price-old">₹{{product.originalPrice | number}}.00</span>
+                            &#8377;{{product.currentPrice | number}}.00
+                            <span class="deal-price-old">&#8377;{{product.originalPrice | number}}.00</span>
                         </div>
                     </div>
                 </div>

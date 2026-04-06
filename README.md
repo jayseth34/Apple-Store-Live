@@ -1,28 +1,53 @@
-# Appstore
+# Apple Store Live (Accessories MVP)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.0.
+This repo contains:
+- Angular frontend (`/`) for browsing Apple-compatible accessories.
+- Node/Express backend (`backend/`) with:
+  - product catalog APIs
+  - admin product upload (image upload)
+  - Razorpay order creation + payment verification
 
-## Development server
+## Prereqs
+- Node.js 20+
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Backend (Express)
+1. Install deps:
+   - `cd backend`
+   - `npm install`
+2. Create env file:
+   - copy `backend/.env.example` → `backend/.env`
+   - set values:
+     - `ADMIN_PASSWORD`
+     - `JWT_SECRET` (min 16 chars)
+     - `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET`
+     - (optional) `RAZORPAY_WEBHOOK_SECRET`
+3. Run:
+   - `npm run dev`
 
-## Code scaffolding
+Backend runs on `http://localhost:4000` and serves uploaded images at `http://localhost:4000/uploads/...`.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Frontend (Angular)
+1. Install deps:
+   - `npm install`
+2. Run:
+   - `npm start`
+3. Open:
+   - `http://localhost:4200`
 
-## Build
+Frontend uses `src/environments/environment*.ts` `apiBaseUrl` (default: `http://localhost:4000`).
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Admin
+- Open `http://localhost:4200/admin/login`
+- Login with `ADMIN_PASSWORD`
+- Add/edit/delete products from `http://localhost:4200/admin/products`
 
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
-"# appleStore" 
+## Products / Categories
+Initial categories for this phase:
+- power bank
+- covers
+- keyboard
+- mouse
+- pencil
+- airpods
+- whoop
+- controller

@@ -1,0 +1,98 @@
+<section class="page-header">
+  <div class="container">
+    <h1>Your Cart</h1>
+    <p>Review items and checkout when ready.</p>
+  </div>
+</section>
+
+<section class="products-section">
+  <div class="container">
+    <p *ngIf="loading">Loading...</p>
+    <p *ngIf="error" class="error">{{ error }}</p>
+
+    <div *ngIf="items.length === 0 && !loading" class="empty">
+      <h3>Your cart is empty</h3>
+      <button class="btn" (click)="goShop()">Continue shopping</button>
+    </div>
+
+    <div class="layout" *ngIf="items.length > 0">
+      <div class="list">
+        <div class="item" *ngFor="let item of items">
+          <div class="left">
+            <div class="name">{{ productFor(item)?.name || ('Product #' + item.productId) }}</div>
+            <div class="sub">{{ productFor(item)?.category }}</div>
+          </div>
+
+          <div class="qty">
+            <button type="button" (click)="dec(item)">-</button>
+            <span>{{ item.quantity }}</span>
+            <button type="button" (click)="inc(item)">+</button>
+          </div>
+
+          <div class="price">&#8377;{{ inr((productFor(item)?.pricePaise || 0) * item.quantity) | number: '1.0-2' }}</div>
+
+          <div class="actions">
+            <button class="btn-outline" (click)="checkoutItem(item)" [disabled]="payingFor === item.productId">
+              {{ payingFor === item.productId ? 'Opening...' : 'Checkout' }}
+            </button>
+            <button class="btn-danger" (click)="remove(item)">Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="card">
+          <div class="row">
+            <div class="label">Total</div>
+            <div class="value">&#8377;{{ inr(totalPaise()) | number: '1.0-2' }}</div>
+          </div>
+          <button class="btn" (click)="checkoutAll()" [disabled]="payingAll">{{ payingAll ? 'Opening...' : 'Checkout all' }}</button>
+          <div class="hint">Pay once for all items and receive them together.</div>
+        </div>
+
+        <div class="card">
+          <h3>Delivery details</h3>
+          <div class="form-grid">
+            <div>
+              <label>Name</label>
+              <input [(ngModel)]="customer.name" (ngModelChange)="saveCustomer()" />
+            </div>
+            <div>
+              <label>Phone</label>
+              <input [(ngModel)]="customer.phone" (ngModelChange)="saveCustomer()" />
+            </div>
+            <div class="full">
+              <label>Email (optional)</label>
+              <input [(ngModel)]="customer.email" (ngModelChange)="saveCustomer()" />
+            </div>
+            <div class="full">
+              <label>Address line 1</label>
+              <input [(ngModel)]="customer.address1" (ngModelChange)="saveCustomer()" />
+            </div>
+            <div class="full">
+              <label>Address line 2 (optional)</label>
+              <input [(ngModel)]="customer.address2" (ngModelChange)="saveCustomer()" />
+            </div>
+            <div>
+              <label>City</label>
+              <input [(ngModel)]="customer.city" (ngModelChange)="saveCustomer()" />
+            </div>
+            <div>
+              <label>State</label>
+              <input [(ngModel)]="customer.state" (ngModelChange)="saveCustomer()" />
+            </div>
+            <div>
+              <label>Pincode</label>
+              <input [(ngModel)]="customer.pincode" (ngModelChange)="saveCustomer()" />
+            </div>
+            <div>
+              <label>Country</label>
+              <input [(ngModel)]="customer.country" (ngModelChange)="saveCustomer()" />
+            </div>
+          </div>
+          <p class="error" *ngIf="paymentStatus">{{ paymentStatus }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

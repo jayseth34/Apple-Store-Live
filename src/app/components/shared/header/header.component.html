@@ -1,22 +1,20 @@
-<!-- Marquee Top Bar -->
 <div class="marquee-container">
   <div class="marquee">
-    <span class="marquee-item">MACBOOKS</span>
-    <span class="marquee-item">WATCHES</span>
-    <span class="marquee-item">AIR PODS</span>
-    <span class="marquee-item">SIGN UP & ENJOY 20% OFF</span>
-    <span class="marquee-item">FREE SHIPPING ON ALL INDIA</span>
-    <span class="marquee-item">WELCOME TO THE APPLE STORE</span>
-    <span class="marquee-item">IPHONES</span>
-    <span class="marquee-item">IPAD AIR</span>
+    <span class="marquee-item">POWER BANK</span>
+    <span class="marquee-item">COVERS</span>
+    <span class="marquee-item">KEYBOARD</span>
+    <span class="marquee-item">MOUSE</span>
+    <span class="marquee-item">PENCIL</span>
+    <span class="marquee-item">AIRPODS</span>
+    <span class="marquee-item">WHOOP</span>
+    <span class="marquee-item">CONTROLLER</span>
   </div>
 </div>
 
-<!-- Navigation -->
 <nav class="navbar navbar-expand-lg sticky-top">
   <div class="container">
-    <a class="navbar-brand" routerLink="/">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple Store">
+    <a class="navbar-brand" (click)="goHome()" style="cursor: pointer">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple Store" />
     </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -25,132 +23,21 @@
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav mx-auto">
-        <!-- iPhone Dropdown -->
-        <li class="nav-item dropdown" 
-            (mouseenter)="showDropdown('iphone')" 
-            (mouseleave)="hideDropdown('iphone')">
-          <a class="nav-link dropdown-toggle" 
-             [class.active]="activeDropdown === 'iphone'"
-             (click)="toggleDropdown('iphone')"
-             href="#">
-            iPhone <i class="fas fa-chevron-down"></i>
-          </a>
-          <div class="dropdown-menu" 
-               [class.show]="activeDropdown === 'iphone'">
-            <a class="dropdown-item" 
-               *ngFor="let item of navigationMenus.iphone" 
-               (click)="navigateToProduct(item.route)"
-               [routerLink]="item.route">
-              {{item.name}}
-            </a>
-          </div>
-        </li>
-
-        <!-- iPad Dropdown -->
-        <li class="nav-item dropdown" 
-            (mouseenter)="showDropdown('ipad')" 
-            (mouseleave)="hideDropdown('ipad')">
-          <a class="nav-link dropdown-toggle" 
-             [class.active]="activeDropdown === 'ipad'"
-             (click)="toggleDropdown('ipad')"
-             href="#">
-            iPad <i class="fas fa-chevron-down"></i>
-          </a>
-          <div class="dropdown-menu" 
-               [class.show]="activeDropdown === 'ipad'">
-            <a class="dropdown-item" 
-               *ngFor="let item of navigationMenus.ipad" 
-               (click)="navigateToProduct(item.route)"
-               [routerLink]="item.route">
-              {{item.name}}
-            </a>
-          </div>
-        </li>
-
-        <!-- Watches Dropdown -->
-        <li class="nav-item dropdown" 
-            (mouseenter)="showDropdown('watches')" 
-            (mouseleave)="hideDropdown('watches')">
-          <a class="nav-link dropdown-toggle" 
-             [class.active]="activeDropdown === 'watches'"
-             (click)="toggleDropdown('watches')"
-             href="#">
-            Watches <i class="fas fa-chevron-down"></i>
-          </a>
-          <div class="dropdown-menu" 
-               [class.show]="activeDropdown === 'watches'">
-            <a class="dropdown-item" 
-               *ngFor="let item of navigationMenus.watches" 
-               (click)="navigateToProduct(item.route)"
-               [routerLink]="item.route">
-              {{item.name}}
-            </a>
-          </div>
-        </li>
-
-        <!-- MacBook Dropdown -->
-        <li class="nav-item dropdown" 
-            (mouseenter)="showDropdown('macbook')" 
-            (mouseleave)="hideDropdown('macbook')">
-          <a class="nav-link dropdown-toggle" 
-             [class.active]="activeDropdown === 'macbook'"
-             (click)="toggleDropdown('macbook')"
-             href="#">
-            MacBook <i class="fas fa-chevron-down"></i>
-          </a>
-          <div class="dropdown-menu" 
-               [class.show]="activeDropdown === 'macbook'">
-            <a class="dropdown-item" 
-               *ngFor="let item of navigationMenus.macbook" 
-               (click)="navigateToProduct(item.route)"
-               [routerLink]="item.route">
-              {{item.name}}
-            </a>
-          </div>
-        </li>
-
-        <!-- AirPods Dropdown -->
-        <li class="nav-item dropdown" 
-            (mouseenter)="showDropdown('airpods')" 
-            (mouseleave)="hideDropdown('airpods')">
-          <a class="nav-link dropdown-toggle" 
-             [class.active]="activeDropdown === 'airpods'"
-             (click)="toggleDropdown('airpods')"
-             href="#">
-            AirPods <i class="fas fa-chevron-down"></i>
-          </a>
-          <div class="dropdown-menu" 
-               [class.show]="activeDropdown === 'airpods'">
-            <a class="dropdown-item" 
-               *ngFor="let item of navigationMenus.airpods" 
-               (click)="navigateToProduct(item.route)"
-               [routerLink]="item.route">
-              {{item.name}}
-            </a>
-          </div>
-        </li>
-
-        <!-- Static Menu Items -->
         <li class="nav-item">
-          <a class="nav-link" routerLink="/products" [queryParams]="{category: 'hot-deals'}">Hot Deals</a>
+          <a class="nav-link" (click)="goProducts()">All Products</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/products" [queryParams]="{category: 'accessories'}">Accessories</a>
+        <li class="nav-item" *ngFor="let c of categories">
+          <a class="nav-link" (click)="goProducts(c.id)">{{ c.name }}</a>
         </li>
       </ul>
-      
-      <div class="d-flex align-items-center">
-        <button class="btn btn-link p-2" (click)="toggleSearch()">
-          <i class="fas fa-search"></i>
+
+      <div class="d-flex align-items-center" style="gap: 10px">
+        <button class="btn btn-link p-2" (click)="goMyOrders()">My Orders</button>
+        <button class="btn btn-link p-2" (click)="goCart()" aria-label="Cart">
+          Cart
+          <span class="badge" *ngIf="getCartCount() > 0">{{ getCartCount() }}</span>
         </button>
-        <button class="btn btn-link p-2 position-relative" (click)="openCart()">
-          <i class="fas fa-shopping-bag"></i>
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary" 
-                style="font-size: 10px;" 
-                *ngIf="cartCount > 0">
-            {{cartCount}}
-          </span>
-        </button>
+        <button class="btn btn-link p-2" (click)="goAdmin()">Admin</button>
       </div>
     </div>
   </div>

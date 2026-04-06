@@ -1,0 +1,75 @@
+<div class="admin-page">
+  <div class="topbar">
+    <h2>{{ mode === 'create' ? 'Add Product' : 'Edit Product' }}</h2>
+    <button class="btn-outline" routerLink="/admin/products">Back</button>
+  </div>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Loading...</p>
+
+  <form class="card" [formGroup]="form" (ngSubmit)="save()" *ngIf="!loading">
+    <div class="grid">
+      <div>
+        <label>Name</label>
+        <input formControlName="name" />
+        <div class="field-error" *ngIf="form.controls.name.touched && form.controls.name.invalid">
+          Name is required (min 2 characters).
+        </div>
+      </div>
+
+      <div>
+        <label>Category</label>
+        <select formControlName="category">
+          <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+        </select>
+      </div>
+
+      <div class="full">
+        <label>Description</label>
+        <textarea rows="4" formControlName="description"></textarea>
+        <div class="field-error" *ngIf="form.controls.description.touched && form.controls.description.invalid">
+          Description is required (min 5 characters).
+        </div>
+      </div>
+
+      <div>
+        <label>Price (&#8377;)</label>
+        <input type="number" formControlName="priceInr" />
+        <div class="field-error" *ngIf="form.controls.priceInr.touched && form.controls.priceInr.invalid">
+          Price must be at least 1.
+        </div>
+      </div>
+
+      <div>
+        <label>Original Price (&#8377;) (optional)</label>
+        <input type="number" formControlName="compareAtPriceInr" />
+      </div>
+
+      <div>
+        <label>Stock</label>
+        <input type="number" formControlName="stock" />
+        <div class="field-error" *ngIf="form.controls.stock.touched && form.controls.stock.invalid">
+          Stock must be 0 or more.
+        </div>
+      </div>
+
+      <div>
+        <label>Active</label>
+        <select formControlName="isActive">
+          <option [ngValue]="true">Yes</option>
+          <option [ngValue]="false">No</option>
+        </select>
+      </div>
+
+      <div class="full">
+        <label>Image</label>
+        <input type="file" (change)="onFileChange($event)" />
+        <div class="sub" *ngIf="imageFile">{{ imageFile.name }}</div>
+      </div>
+    </div>
+
+    <button class="btn" type="submit" [disabled]="loading">
+      {{ loading ? 'Saving...' : 'Save' }}
+    </button>
+  </form>
+</div>
