@@ -1,4 +1,4 @@
-export type ProductCategory =
+﻿export type ProductCategory =
   | "power bank"
   | "covers"
   | "keyboard"
@@ -17,6 +17,7 @@ export interface Product {
   pricePaise: number;
   compareAtPricePaise?: number;
   imagePath?: string;
+  isTopPick?: boolean;
   stock: number;
   isActive: boolean;
   createdAt: string;

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+﻿import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { Product } from "../models/product";
@@ -7,10 +7,11 @@ import { Product } from "../models/product";
 export class ProductsService {
   constructor(private http: HttpClient) {}
 
-  list(params?: { category?: string; q?: string }) {
+  list(params?: { category?: string; q?: string; topPick?: boolean }) {
     let httpParams = new HttpParams();
     if (params?.category) httpParams = httpParams.set("category", params.category);
     if (params?.q) httpParams = httpParams.set("q", params.q);
+    if (params?.topPick) httpParams = httpParams.set("topPick", "true");
     return this.http.get<Product[]>(`${environment.apiBaseUrl}/api/products`, { params: httpParams });
   }
 
@@ -18,3 +19,4 @@ export class ProductsService {
     return this.http.get<Product>(`${environment.apiBaseUrl}/api/products/${id}`);
   }
 }
+

@@ -1,4 +1,4 @@
-import express from "express";
+﻿import express from "express";
 import cors from "cors";
 import path from "node:path";
 import crypto from "node:crypto";
@@ -136,7 +136,12 @@ app.get("/api/products", async (req, res) => {
   const category = typeof req.query.category === "string" ? req.query.category : undefined;
   const q = typeof req.query.q === "string" ? req.query.q : undefined;
 
-  const products = await listActiveProducts({ category, q });
+  const topPick =
+    typeof req.query.topPick === "string"
+      ? ["1", "true", "yes"].includes(req.query.topPick.toLowerCase())
+      : undefined;
+
+  const products = await listActiveProducts({ category, q, topPick });
   return res.json(products);
 });
 
@@ -148,6 +153,17 @@ app.get("/api/products/:id", async (req, res) => {
   return res.json(product);
 });
 
+
+const Bool = z.preprocess((v) => {
+  if (typeof v === "boolean") return v;
+  if (typeof v === "number") return v === 1;
+  if (typeof v === "string") {
+    const s = v.trim().toLowerCase();
+    if (["1", "true", "yes", "on"].includes(s)) return true;
+    if (["0", "false", "no", "off"].includes(s)) return false;
+  }
+  return v;
+}, z.boolean());
 const AdminProductSchema = z.object({
   name: z.string().min(2),
   category: z.string().min(2),
@@ -158,7 +174,8 @@ const AdminProductSchema = z.object({
     z.coerce.number().int().positive().optional()
   ),
   stock: z.coerce.number().int().nonnegative().default(0),
-  isActive: z.coerce.boolean().default(true)
+  isTopPick: Bool.default(false),
+  isActive: Bool.default(true)
 });
 
 app.post("/api/admin/products", requireAdmin, upload.single("image"), async (req, res) => {
@@ -425,3 +442,5 @@ app.listen(env.PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`Backend listening on http://localhost:${env.PORT}`);
 });
+
+

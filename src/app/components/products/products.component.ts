@@ -12,9 +12,11 @@ import { ProductsService } from "../../services/products.service";
 })
 export class ProductsComponent implements OnInit {
   products: Product[] = [];
+  private productsRaw: Product[] = [];
   loading = false;
   error: string | null = null;
   activeCategory: string | null = null;
+  sortBy: "latest" | "price-low" | "price-high" = "latest";
 
   constructor(
     private productsApi: ProductsService,
@@ -36,7 +38,8 @@ export class ProductsComponent implements OnInit {
 
     this.productsApi.list({ category: this.activeCategory || undefined }).subscribe({
       next: (products) => {
-        this.products = products;
+        this.productsRaw = products;
+        this.applySort();
         this.loading = false;
       },
       error: () => {
@@ -66,7 +69,21 @@ export class ProductsComponent implements OnInit {
     this.cart.add(product.id, 1);
   }
 
-  onSortChange(_event: any): void {
-    // optional later
+  applySort(): void {
+    const list = [...this.productsRaw];
+    if (this.sortBy === "price-low") {
+      list.sort((a, b) => a.pricePaise - b.pricePaise);
+    } else if (this.sortBy === "price-high") {
+      list.sort((a, b) => b.pricePaise - a.pricePaise);
+    } else {
+      // 'latest' is already sorted by backend, keep stable order
+    }
+    this.products = list;
+  }
+
+  onSortChange(event: any): void {
+    const v = String(event?.target?.value || "latest");
+    if (v === "price-low" || v === "price-high" || v === "latest") this.sortBy = v;
+    this.applySort();
   }
 }

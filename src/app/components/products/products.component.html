@@ -13,7 +13,7 @@
         Showing {{ products.length }} products
       </div>
       <div class="filter-right">
-        <select class="sort-dropdown" (change)="onSortChange($event)">
+        <select class="sort-dropdown" [value]="sortBy" (change)="onSortChange($event)">
           <option value="latest">Sort by latest</option>
           <option value="price-low">Sort by price: low to high</option>
           <option value="price-high">Sort by price: high to low</option>

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+﻿import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { Product } from "../models/product";
@@ -11,6 +11,7 @@ export type ProductUpsertInput = {
   compareAtPricePaise?: number;
   stock: number;
   isActive: boolean;
+  isTopPick?: boolean;
   image?: File | null;
 };
 
@@ -44,7 +45,9 @@ export class AdminProductsService {
     }
     if (input.stock != null) fd.append("stock", String(input.stock));
     if (input.isActive != null) fd.append("isActive", String(input.isActive));
+    if (input.isTopPick != null) fd.append("isTopPick", String(input.isTopPick));
     if (input.image) fd.append("image", input.image);
     return fd;
   }
 }
+

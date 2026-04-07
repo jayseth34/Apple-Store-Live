@@ -1218,7 +1218,7 @@
 }
 
 .accessory-card {
-    background: linear-gradient(135deg, var(--apple-blue) 0%, #0056D6 100%);
+    background: #111;
     color: white;
     border-radius: 20px;
     padding: 32px;
@@ -1237,16 +1237,46 @@
     box-shadow: 0 12px 40px rgba(0, 122, 255, 0.3);
 }
 
-.accessory-card:nth-child(2) {
-    background: linear-gradient(135deg, var(--apple-green) 0%, #2AB653 100%);
-}
-
 .accessory-card:nth-child(2):hover {
     box-shadow: 0 12px 40px rgba(52, 199, 89, 0.3);
 }
 
+
+.accessory-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: scale(1);
+    transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1), filter 0.8s ease;
+    filter: brightness(0.85) contrast(1.1);
+    z-index: 0;
+}
+
+.accessory-card:hover .accessory-bg {
+    transform: scale(1.08);
+    filter: brightness(0.65) contrast(1.2);
+}
+
+.accessory-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.75) 0%, rgba(0, 86, 214, 0.35) 100%);
+    z-index: 1;
+}
+
+.accessory-card:nth-child(2) .accessory-overlay {
+    background: linear-gradient(135deg, rgba(52, 199, 89, 0.65) 0%, rgba(42, 182, 83, 0.30) 100%);
+}
+
+.accessory-content {
+    position: relative;
+    z-index: 3;
+}
 /* Accessory Card Background Pattern */
 .accessory-card::before {
+    z-index: 2;
     content: '';
     position: absolute;
     top: -50%;

@@ -1,4 +1,4 @@
-<div class="admin-page">
+﻿<div class="admin-page">
   <div class="topbar">
     <h2>{{ mode === 'create' ? 'Add Product' : 'Edit Product' }}</h2>
     <button class="btn-outline" routerLink="/admin/products">Back</button>
@@ -51,6 +51,13 @@
         <div class="field-error" *ngIf="form.controls.stock.touched && form.controls.stock.invalid">
           Stock must be 0 or more.
         </div>
+      </div>
+      <div>
+        <label>Top Picks</label>
+        <label class="checkbox-row">
+          <input type="checkbox" formControlName="isTopPick" />
+          <span>Show in Top Picks</span>
+        </label>
       </div>
 
       <div>

@@ -211,6 +211,8 @@
         <div class="accessories-section">
             <div class="accessory-card" *ngFor="let accessory of accessoriesCards"
                 (click)="navigateToCategory(accessory.categoryId)">
+                <div class="accessory-bg" *ngIf="accessory.image" [style.background-image]="'url(' + accessory.image + ')'" aria-hidden="true"></div>
+                <div class="accessory-overlay" aria-hidden="true"></div>
                 <div class="accessory-content">
                     <h3>{{accessory.title}}</h3>
                     <p>{{accessory.description}}</p>

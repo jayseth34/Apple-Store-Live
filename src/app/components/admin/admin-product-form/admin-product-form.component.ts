@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+﻿import { Component, OnInit } from "@angular/core";
 import { FormBuilder, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Product, paiseToInr } from "../../../models/product";
@@ -36,6 +36,7 @@ export class AdminProductFormComponent implements OnInit {
     priceInr: [0, [Validators.required, Validators.min(1)]],
     compareAtPriceInr: [null as any],
     stock: [0, [Validators.required, Validators.min(0)]],
+    isTopPick: [false],
     isActive: [true]
   });
 
@@ -67,6 +68,7 @@ export class AdminProductFormComponent implements OnInit {
           priceInr: paiseToInr(p.pricePaise),
           compareAtPriceInr: p.compareAtPricePaise ? paiseToInr(p.compareAtPricePaise) : null,
           stock: p.stock,
+          isTopPick: (p as any).isTopPick === true,
           isActive: p.isActive
         });
         this.loading = false;
@@ -99,7 +101,8 @@ export class AdminProductFormComponent implements OnInit {
       compareAtPricePaise:
         v.compareAtPriceInr == null || v.compareAtPriceInr === "" ? undefined : Math.round(Number(v.compareAtPriceInr) * 100),
       stock: Number(v.stock) || 0,
-      isActive: !!v.isActive,
+      isTopPick: (v as any).isTopPick === true,
+      isActive: (v as any).isActive === true,
       image: this.imageFile
     };
 
@@ -131,3 +134,5 @@ export class AdminProductFormComponent implements OnInit {
     });
   }
 }
+
+

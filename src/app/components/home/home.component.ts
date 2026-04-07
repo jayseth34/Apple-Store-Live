@@ -1,5 +1,8 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+﻿import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ProductsService } from '../../services/products.service';
+import { Product as ApiProduct, fallbackImageForCategory, paiseToInr } from '../../models/product';
+import { environment } from '../../../environments/environment';
 
 interface Product {
   id: number;
@@ -164,7 +167,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     subtitle: 'our best selling accessories right now.'
   };
 
-  topPicks = [
+  topPicks: Product[] = [
     {
       id: 1,
       name: 'MagSafe Power Bank (Compatible)',
@@ -300,18 +303,22 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   ];
   // Accessories Section
+  // Accessories Section
+  // Accessories Section
   accessoriesCards = [
     {
       categoryId: 'covers',
       title: 'Covers & Cases',
       description: 'Everyday protection with clean looks and comfortable grip.',
-      buttonText: 'Shop Covers'
+      buttonText: 'Shop Covers',
+      image: 'https://images.unsplash.com/photo-1603317575587-6c5c5f2f1b8c?auto=format&fit=crop&w=1600&q=80'
     },
     {
       categoryId: 'airpods',
       title: 'Audio Essentials',
       description: 'Budget earbuds for calls, music and workouts.',
-      buttonText: 'Explore Audio'
+      buttonText: 'Explore Audio',
+      image: 'https://images.unsplash.com/photo-1585386959984-a4155223168e?auto=format&fit=crop&w=1600&q=80'
     }
   ];
   // Sidebar Data
@@ -399,14 +406,15 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   whatsappLink = 'https://wa.me/1234567890';
   whatsappText = 'Contact Us';
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private productsApi: ProductsService) {
     // Initialize scroll dots
-    this.scrollDots = Array.from({ length: Math.ceil(this.topPicks.length / 3) }, (_, i) => i);
+    this.refreshPicksDots();
   }
 
   ngOnInit(): void {
     this.initData();
     this.initAnimations();
+    this.loadTopPicks();
     this.dealsScrollDots = Array.from({ length: Math.ceil(this.hotDeals.length / 3) }, (_, i) => i);
 
   }
@@ -428,6 +436,40 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.categories = await this.apiService.getCategories();
     // this.hotDeals = await this.apiService.getHotDeals();
     // etc.
+  }
+
+  private refreshPicksDots(): void {
+    this.scrollDots = Array.from({ length: Math.ceil(this.topPicks.length / 3) }, (_, i) => i);
+  }
+
+  private imageUrlForProduct(p: ApiProduct): string {
+    if (!p.imagePath) return fallbackImageForCategory(p.category);
+    if (p.imagePath.startsWith('http')) return p.imagePath;
+    if (p.imagePath.startsWith('/')) return `${environment.apiBaseUrl}${p.imagePath}`;
+    return `${environment.apiBaseUrl}/${p.imagePath}`;
+  }
+
+  private loadTopPicks(): void {
+    this.productsApi.list({ topPick: true }).subscribe({
+      next: (products) => {
+        if (!Array.isArray(products) || products.length === 0) return;
+
+        this.topPicks = products.map((p) => ({
+          id: p.id,
+          name: p.name,
+          image: this.imageUrlForProduct(p),
+          category: p.category,
+          badge: 'Top Pick',
+          currentPrice: paiseToInr(p.pricePaise),
+          originalPrice: p.compareAtPricePaise ? paiseToInr(p.compareAtPricePaise) : undefined
+        }));
+
+        this.refreshPicksDots();
+      },
+      error: () => {
+        // keep fallback picks
+      }
+    });
   }
 
   navigateToProduct(productId: number): void {
@@ -540,3 +582,5 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 }
+
+

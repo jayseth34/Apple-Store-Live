@@ -1,4 +1,4 @@
-import path from "node:path";
+﻿import path from "node:path";
 import fs from "node:fs";
 import crypto from "node:crypto";
 import { Low } from "lowdb";
@@ -12,6 +12,7 @@ export type Product = {
   pricePaise: number;
   compareAtPricePaise?: number;
   imagePath?: string;
+  isTopPick?: boolean;
   stock: number;
   isActive: boolean;
   createdAt: string;
@@ -190,15 +191,37 @@ export async function initDb() {
 
     await db.write();
   }
+  const seedNames = new Set([
+    "MagSafe Power Bank (Compatible)",
+    "Silicone Case Cover",
+    "Wireless Keyboard (Mac Layout)",
+    "Wireless Mouse",
+    "Stylus Pencil (Compatible)",
+    "True Wireless Earbuds (AirPods-style)",
+    "Fitness Band (WHOOP-style)",
+    "Bluetooth Game Controller"
+  ]);
+
+  const looksLikeSeed =
+    db.data!.products.length === seedNames.size &&
+    db.data!.products.every((p) => seedNames.has(p.name));
+
+  // Clear seeded Top Picks so admin can choose manually
+  if (looksLikeSeed && db.data!.products.some((p) => p.isTopPick)) {
+    for (const p of db.data!.products) p.isTopPick = false;
+    await db.write();
+  }
 }
 
-export async function listActiveProducts(params: { category?: string; q?: string }) {
+export async function listActiveProducts(params: { category?: string; q?: string; topPick?: boolean }) {
   await db.read();
   const category = params.category?.trim().toLowerCase();
   const q = params.q?.trim().toLowerCase();
+  const topPick = params.topPick === true;
 
   return db.data!.products
     .filter((p) => p.isActive)
+    .filter((p) => (topPick ? !!p.isTopPick : true))
     .filter((p) => (category ? p.category.toLowerCase() === category : true))
     .filter((p) =>
       q ? p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q) : true
@@ -295,3 +318,8 @@ export async function decrementProductStock(productId: number, quantity: number)
   await db.write();
   return product;
 }
+
+
+
+
+
