@@ -1,4 +1,4 @@
-export const environment = {
+﻿export const environment = {
   production: true,
-  apiBaseUrl: "http://localhost:4000"
+  apiBaseUrl: "https://apple-store-live.onrender.com"
 };
