@@ -1,0 +1,92 @@
+<div class="admin-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="title">
+      <h1>DB Explorer</h1>
+      <p>Browse and delete records directly from any collection.</p>
+    </div>
+    <div class="header-actions">
+      <input class="search" type="text" [(ngModel)]="query" placeholder="Filter records…" />
+      <button class="btn-outline" (click)="load()">Refresh</button>
+      <button class="btn-outline" (click)="goBack()">← Products</button>
+    </div>
+  </div>
+
+  <!-- Collection tabs -->
+  <div class="tabs">
+    <button
+      class="tab"
+      *ngFor="let col of collections"
+      [class.active]="activeCol.key === col.key"
+      (click)="selectCollection(col)"
+    >
+      {{ col.label }}
+    </button>
+  </div>
+
+  <!-- State messages -->
+  <p class="loading" *ngIf="loading">Loading {{ activeCol.label }}…</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <!-- Table -->
+  <div class="table-wrap" *ngIf="!loading">
+
+    <!-- Count -->
+    <div class="count-bar">
+      <span>
+        Showing <b>{{ filteredRows.length }}</b> of <b>{{ rows.length }}</b> {{ activeCol.label.toLowerCase() }}
+        <span *ngIf="query"> matching "<em>{{ query }}</em>"</span>
+      </span>
+    </div>
+
+    <!-- No results -->
+    <div class="empty" *ngIf="filteredRows.length === 0 && rows.length > 0">
+      No records match your filter.
+    </div>
+    <div class="empty" *ngIf="rows.length === 0 && !loading">
+      This collection is empty.
+    </div>
+
+    <!-- Table -->
+    <div class="table" *ngIf="filteredRows.length > 0">
+      <!-- Head -->
+      <div class="thead">
+        <div class="tcell" *ngFor="let col of activeCol.columns">{{ col }}</div>
+        <div class="tcell actions-head">Actions</div>
+      </div>
+
+      <!-- Rows -->
+      <ng-container *ngFor="let row of filteredRows">
+        <div class="trow" [class.expanded]="expandedId === row.id">
+          <div class="tcell" *ngFor="let col of activeCol.columns">
+            <span *ngIf="!isBoolean(row, col)" class="cell-text" [title]="cellValue(row, col)">
+              {{ cellValue(row, col) }}
+            </span>
+            <span *ngIf="isBoolean(row, col)" class="bool-pill" [class.true]="row[col]">
+              {{ row[col] ? 'Yes' : 'No' }}
+            </span>
+          </div>
+          <div class="tcell actions-cell">
+            <button class="btn-json" (click)="toggleExpand(row.id)" [class.active]="expandedId === row.id">
+              {{ expandedId === row.id ? 'Hide' : 'JSON' }}
+            </button>
+            <button
+              class="btn-del"
+              (click)="confirmDelete(row)"
+              [disabled]="deletingId === row.id"
+            >
+              {{ deletingId === row.id ? '…' : 'Delete' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- JSON expand panel -->
+        <div class="json-panel" *ngIf="expandedId === row.id">
+          <pre>{{ formatJson(row) }}</pre>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+</div>

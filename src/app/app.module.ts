@@ -18,6 +18,8 @@ import { AdminLoginComponent } from "./components/admin/admin-login/admin-login.
 import { AdminProductsComponent } from "./components/admin/admin-products/admin-products.component";
 import { AdminProductFormComponent } from "./components/admin/admin-product-form/admin-product-form.component";
 import { AdminOrdersComponent } from "./components/admin/admin-orders/admin-orders.component";
+import { AdminNavMenusComponent } from "./components/admin/admin-nav-menus/admin-nav-menus.component";
+import { AdminDbComponent } from "./components/admin/admin-db/admin-db.component";
 
 import { AdminAuthInterceptor } from "./auth/admin-auth.interceptor";
 
@@ -35,7 +37,9 @@ import { AdminAuthInterceptor } from "./auth/admin-auth.interceptor";
     AdminLoginComponent,
     AdminProductsComponent,
     AdminProductFormComponent,
-    AdminOrdersComponent
+    AdminOrdersComponent,
+    AdminNavMenusComponent,
+    AdminDbComponent
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule, HttpClientModule],
   providers: [

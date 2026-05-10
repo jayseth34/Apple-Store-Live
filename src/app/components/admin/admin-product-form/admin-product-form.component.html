@@ -53,10 +53,18 @@
         </div>
       </div>
       <div>
-        <label>Top Picks</label>
+        <label>Homepage Sections</label>
         <label class="checkbox-row">
           <input type="checkbox" formControlName="isTopPick" />
           <span>Show in Top Picks</span>
+        </label>
+        <label class="checkbox-row" style="margin-top: 8px;">
+          <input type="checkbox" formControlName="isHotDeal" />
+          <span>Show in Hot Deals</span>
+        </label>
+        <label class="checkbox-row" style="margin-top: 8px;">
+          <input type="checkbox" formControlName="isBestSelling" />
+          <span>Show in Best Selling</span>
         </label>
       </div>
 
@@ -69,8 +77,12 @@
       </div>
 
       <div class="full">
-        <label>Image</label>
-        <input type="file" (change)="onFileChange($event)" />
+        <label>
+          Image
+          <span *ngIf="mode === 'create'" style="color:#b00020; margin-left:4px;">*required</span>
+          <span *ngIf="mode === 'edit'" style="color:#6e6e73; font-weight:400; margin-left:4px; font-size:11px;">(leave blank to keep existing)</span>
+        </label>
+        <input type="file" (change)="onFileChange($event)" [required]="mode === 'create'" />
         <div class="sub" *ngIf="imageFile">{{ imageFile.name }}</div>
       </div>
     </div>

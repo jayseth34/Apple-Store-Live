@@ -1,3 +1,30 @@
+<!-- Video Hero Section (full-width, outside .container) -->
+<section class="video-hero">
+  <div class="video-bg-wrap">
+    <video class="hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1600&q=80">
+      <!-- Replace this src with your actual video file: assets/hero-video.mp4 -->
+      <source src="assets/hero-video.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+  </div>
+  <div class="video-content">
+    <p class="video-eyebrow">New Arrivals 2025</p>
+    <h1 class="video-headline">Experience Apple<br><span>Like Never Before</span></h1>
+    <p class="video-sub">Accessories, audio, and essentials — crafted for your Apple devices.</p>
+    <div class="video-ctas">
+      <a routerLink="/products" class="video-btn-primary">Shop Now</a>
+      <a routerLink="/products" class="video-btn-ghost">See All Products</a>
+    </div>
+  </div>
+  <div class="video-scroll-hint">
+    <div class="scroll-arrow">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
 <main class="container">
     <!-- Hero Section -->
     <section class="hero-section fade-in">
@@ -223,29 +250,59 @@
     </section>
 
 
-    <!-- Sidebar Layout -->
+    <!-- Best Selling Layout -->
     <section class="sidebar-layout fade-in">
+
+        <!-- Sidebar: dynamic categories from nav menus -->
         <div class="sidebar">
-            <img [src]="sidebarData.image" [alt]="sidebarData.imageAlt">
+            <div class="sidebar-head">Browse by Category</div>
             <ul class="sidebar-menu">
-                <li *ngFor="let menuItem of sidebarData.menuItems" (click)="navigateToCategory(menuItem.id)">
-                    <i [class]="menuItem.icon"></i> {{menuItem.name}}
+                <li [class.active]="selectedBsCategory === null" (click)="selectBsCategory(null)">
+                    <i class="fas fa-th-large"></i> All Products
+                </li>
+                <li *ngFor="let item of navCategoryItems"
+                    [class.active]="selectedBsCategory === item.categorySlug"
+                    (click)="selectBsCategory(item.categorySlug)">
+                    <i [class]="iconForCategory(item.categorySlug)"></i> {{item.name}}
                 </li>
             </ul>
         </div>
-        <div>
-            <h2 class="section-title" style="text-align: left; margin-bottom: 30px;">{{bestSellingTitle}}</h2>
-            <div class="best-selling-grid">
-                <div class="deal-card" *ngFor="let product of bestSellingProducts"
-                    (click)="navigateToProduct(product.id)">
-                    <div class="deal-badge">{{product.badge}}</div>
-                    <img [src]="product.image" [alt]="product.name">
-                    <div class="deal-card-content">
-                        <p style="color: var(--apple-text-secondary); font-size: 12px;">{{product.category}}</p>
-                        <h4>{{product.name}}</h4>
-                        <div class="deal-price">
-                            &#8377;{{product.currentPrice | number}}.00
-                            <span class="deal-price-old">&#8377;{{product.originalPrice | number}}.00</span>
+
+        <!-- Main: best selling products -->
+        <div class="bs-main">
+            <div class="bs-header">
+                <div>
+                    <h2 class="section-title" style="text-align:left; margin:0 0 4px">Best Selling</h2>
+                    <p class="bs-sub">
+                        {{ selectedBsCategory ? selectedBsCategory : 'All categories' }}
+                        &middot; {{ filteredBestSelling.length }} products
+                    </p>
+                </div>
+                <a routerLink="/products" class="bs-view-all">View all &rarr;</a>
+            </div>
+
+            <div class="bs-empty" *ngIf="filteredBestSelling.length === 0 && allBestSelling.length > 0">
+                No products in this category yet.
+            </div>
+            <div class="bs-empty" *ngIf="allBestSelling.length === 0 && !bestSellingLoaded">
+                Loading products…
+            </div>
+            <div class="bs-empty" *ngIf="allBestSelling.length === 0 && bestSellingLoaded">
+                No best selling products added yet.
+            </div>
+
+            <div class="bs-grid" *ngIf="filteredBestSelling.length > 0">
+                <div class="bs-card" *ngFor="let p of filteredBestSelling" (click)="navigateToProduct(p.id)">
+                    <div class="bs-image">
+                        <img [src]="p.image" [alt]="p.name" loading="lazy" />
+                        <span class="bs-badge" *ngIf="p.badge">{{p.badge}}</span>
+                    </div>
+                    <div class="bs-info">
+                        <p class="bs-cat">{{p.category}}</p>
+                        <h4 class="bs-name">{{p.name}}</h4>
+                        <div class="bs-price-row">
+                            <span class="bs-price">&#8377;{{p.currentPrice | number}}</span>
+                            <span class="bs-old" *ngIf="p.originalPrice">&#8377;{{p.originalPrice | number}}</span>
                         </div>
                     </div>
                 </div>
@@ -253,8 +310,15 @@
         </div>
     </section>
 
-    <!-- Happy Customers -->
-     <!-- 
+</main>
+
+<!-- WhatsApp Button -->
+<a [href]="whatsappLink" class="whatsapp-btn">
+    <i class="fab fa-whatsapp"></i>{{whatsappText}}
+</a>
+
+    <!-- Happy Customers (commented out) -->
+     <!--
     <section class="customers-section fade-in">
         <h2 class="section-title">{{customersTitle.main}} <span
                 style="color: var(--apple-green);">{{customersTitle.highlight}}</span></h2>
@@ -278,10 +342,4 @@
             </div>
         </div>
     </section>
-</main>
 -->
-
-<!-- WhatsApp Button -->
-<a [href]="whatsappLink" class="whatsapp-btn">
-    <i class="fab fa-whatsapp"></i>{{whatsappText}}
-</a>

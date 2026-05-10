@@ -1,84 +1,166 @@
-.page{
-  max-width:1000px;
-  margin:24px auto;
-  padding:0 16px;
+.page {
+  max-width: 900px;
+  margin: 32px auto 80px;
+  padding: 0 16px;
 }
-.top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
 }
-.actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
+
+.top h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #1d1d1f;
+  margin: 0;
 }
-.list{
-  margin-top:16px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
-.card{
-  background:#fff;
-  border:1px solid rgba(0,0,0,0.08);
-  border-radius:16px;
-  padding:14px;
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:14px;
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-.title{font-weight:700;}
-.meta{
-  margin-top:8px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
+
+.card {
+  background: #fff;
+  border: 1.5px solid rgba(0, 0, 0, 0.07);
+  border-radius: 18px;
+  padding: 16px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  transition: box-shadow 0.2s;
 }
-.pill{
-  font-size:12px;
-  border:1px solid rgba(0,0,0,0.12);
-  border-radius:999px;
-  padding:4px 10px;
-  background:rgba(0,0,0,0.02);
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
 }
-.sub{margin-top:8px; font-size:12px; opacity:0.8; line-height:1.4;}
-.right{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;}
-.error{color:#b00020;}
-.empty{
-  margin-top:16px;
-  border:1px dashed rgba(0,0,0,0.18);
-  border-radius:16px;
-  padding:18px;
-  background:rgba(0,0,0,0.02);
+
+.title {
+  font-weight: 700;
+  font-size: 15px;
+  color: #1d1d1f;
 }
-.btn-primary{
-  border:none;
-  background:#111;
-  color:#fff;
-  border-radius:12px;
-  padding:10px 12px;
+
+.meta {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
-.btn-outline{
-  border:1px solid rgba(0,0,0,0.2);
-  background:transparent;
-  border-radius:12px;
-  padding:10px 12px;
-  color: #111;
+
+.pill {
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 999px;
+  padding: 3px 10px;
+  background: #f5f5f7;
+  color: #1d1d1f;
 }
-.btn-danger{
-  border:1px solid rgba(176,0,32,0.3);
-  background:rgba(176,0,32,0.06);
-  color:#b00020;
-  border-radius:12px;
-  padding:10px 12px;
+
+.sub {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #6e6e73;
+  line-height: 1.5;
+}
+
+.right {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.error {
   color: #b00020;
+  font-size: 13px;
 }
-@media (max-width:640px){
-  .card{flex-direction:column;}
-  .right{width:100%; justify-content:stretch;}
-  .right button{flex:1;}
+
+.empty {
+  margin-top: 24px;
+  border: 1.5px dashed rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+  padding: 48px 24px;
+  background: #fafafa;
+  text-align: center;
+  color: #6e6e73;
+}
+
+.btn-primary {
+  border: none;
+  background: #1d1d1f;
+  color: #fff;
+  border-radius: 12px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #2d2d2f;
+}
+
+.btn-outline {
+  border: 1.5px solid rgba(0, 0, 0, 0.18);
+  background: transparent;
+  border-radius: 12px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d1d1f;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-outline:hover {
+  background: #f5f5f7;
+}
+
+.btn-danger {
+  border: 1.5px solid rgba(176, 0, 32, 0.3);
+  background: rgba(176, 0, 32, 0.06);
+  color: #b00020;
+  border-radius: 12px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-danger:hover {
+  background: rgba(176, 0, 32, 0.12);
+}
+
+@media (max-width: 640px) {
+  .card {
+    flex-direction: column;
+  }
+
+  .right {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .right button {
+    flex: 1;
+  }
 }

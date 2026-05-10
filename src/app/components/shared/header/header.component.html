@@ -1,44 +1,123 @@
+<!-- Marquee ticker -->
 <div class="marquee-container">
   <div class="marquee">
-    <span class="marquee-item">POWER BANK</span>
-    <span class="marquee-item">COVERS</span>
-    <span class="marquee-item">KEYBOARD</span>
-    <span class="marquee-item">MOUSE</span>
-    <span class="marquee-item">PENCIL</span>
-    <span class="marquee-item">AIRPODS</span>
-    <span class="marquee-item">WHOOP</span>
-    <span class="marquee-item">CONTROLLER</span>
+    <span class="marquee-item">MacBook</span>
+    <span class="marquee-item">Mac Mini</span>
+    <span class="marquee-item">AirPods</span>
+    <span class="marquee-item">iPhone</span>
+    <span class="marquee-item">iPads</span>
+    <span class="marquee-item">Accessories</span>
+    <span class="marquee-item">Power Bank</span>
+    <span class="marquee-item">Covers</span>
+    <span class="marquee-item">Keyboard</span>
+    <span class="marquee-item">Mouse</span>
+    <span class="marquee-item">Pencil</span>
+    <span class="marquee-item">Controller</span>
   </div>
 </div>
 
-<nav class="navbar navbar-expand-lg sticky-top">
-  <div class="container">
-    <a class="navbar-brand" (click)="goHome()" style="cursor: pointer">
+<!-- Main navbar -->
+<nav class="main-nav">
+  <div class="nav-inner">
+
+    <!-- Logo -->
+    <a class="navbar-brand" (click)="goHome()" (click)="closeAll()">
       <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple Store" />
     </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <!-- Desktop nav links -->
+    <ul class="nav-links desktop-only">
+      <li>
+        <a class="nav-link" (click)="goProducts()">All Products</a>
+      </li>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav mx-auto">
-        <li class="nav-item">
-          <a class="nav-link" (click)="goProducts()">All Products</a>
-        </li>
-        <li class="nav-item" *ngFor="let c of categories">
-          <a class="nav-link" (click)="goProducts(c.id)">{{ c.name }}</a>
-        </li>
-      </ul>
-
-      <div class="d-flex align-items-center" style="gap: 10px">
-        <button class="btn btn-link p-2" (click)="goMyOrders()">My Orders</button>
-        <button class="btn btn-link p-2" (click)="goCart()" aria-label="Cart">
-          Cart
-          <span class="badge" *ngIf="getCartCount() > 0">{{ getCartCount() }}</span>
+      <!-- Dynamic dropdown menus -->
+      <li
+        class="nav-dropdown-wrap"
+        *ngFor="let menu of navMenus"
+        (mouseenter)="openDropdown(menu.id)"
+        (mouseleave)="closeDropdown()"
+      >
+        <button class="nav-link dropdown-trigger" (click)="toggleDropdown(menu.id)">
+          {{ menu.name }}
+          <svg class="chevron" [class.open]="openDropdownId === menu.id" width="10" height="6" viewBox="0 0 10 6">
+            <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          </svg>
         </button>
-        <button class="btn btn-link p-2" (click)="goAdmin()">Admin</button>
+
+        <div class="dropdown-panel" [class.visible]="openDropdownId === menu.id">
+          <a
+            class="dropdown-item"
+            *ngFor="let item of menu.items"
+            (click)="goProducts(item.categorySlug)"
+          >
+            <span class="di-name">{{ item.name }}</span>
+          </a>
+          <a class="dropdown-item view-all" (click)="goProducts()">
+            <span class="di-name">View All →</span>
+          </a>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Right side buttons -->
+    <div class="nav-right desktop-only">
+      <button class="icon-btn" (click)="goMyOrders()" title="My Orders">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        <span>Orders</span>
+      </button>
+      <button class="icon-btn cart-btn" (click)="goCart()" title="Cart">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <span>Cart</span>
+        <span class="cart-badge" *ngIf="getCartCount() > 0">{{ getCartCount() }}</span>
+      </button>
+      <button class="nav-link admin-link" (click)="goAdmin()">Admin</button>
+    </div>
+
+    <!-- Mobile hamburger -->
+    <div class="mobile-nav-wrap">
+      <button class="cart-btn-mobile" (click)="goCart()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <span class="cart-badge-mobile" *ngIf="getCartCount() > 0">{{ getCartCount() }}</span>
+      </button>
+      <button class="hamburger" (click)="toggleMobileMenu(); $event.stopPropagation()" [class.open]="mobileMenuOpen">
+        <span></span><span></span><span></span>
+      </button>
+
+      <!-- Mobile drawer -->
+      <div class="mobile-drawer" [class.open]="mobileMenuOpen" (click)="$event.stopPropagation()">
+        <a class="mobile-link" (click)="goProducts()">All Products</a>
+
+        <div class="mobile-accordion" *ngFor="let menu of navMenus">
+          <button class="mobile-accordion-btn" (click)="toggleMobileExpand(menu.id)">
+            {{ menu.name }}
+            <svg class="chevron" [class.open]="mobileExpandedMenuId === menu.id" width="10" height="6" viewBox="0 0 10 6">
+              <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="mobile-sub" *ngIf="mobileExpandedMenuId === menu.id">
+            <a class="mobile-sub-link" *ngFor="let item of menu.items" (click)="goProducts(item.categorySlug)">
+              {{ item.name }}
+            </a>
+          </div>
+        </div>
+
+        <div class="mobile-divider"></div>
+        <a class="mobile-link" (click)="goMyOrders()">My Orders</a>
+        <a class="mobile-link" (click)="goAdmin()">Admin</a>
       </div>
     </div>
+
   </div>
 </nav>

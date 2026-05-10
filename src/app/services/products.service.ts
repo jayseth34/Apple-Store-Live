@@ -7,11 +7,13 @@ import { Product } from "../models/product";
 export class ProductsService {
   constructor(private http: HttpClient) {}
 
-  list(params?: { category?: string; q?: string; topPick?: boolean }) {
+  list(params?: { category?: string; q?: string; topPick?: boolean; hotDeal?: boolean; bestSelling?: boolean }) {
     let httpParams = new HttpParams();
     if (params?.category) httpParams = httpParams.set("category", params.category);
     if (params?.q) httpParams = httpParams.set("q", params.q);
     if (params?.topPick) httpParams = httpParams.set("topPick", "true");
+    if (params?.hotDeal) httpParams = httpParams.set("hotDeal", "true");
+    if (params?.bestSelling) httpParams = httpParams.set("bestSelling", "true");
     return this.http.get<Product[]>(`${environment.apiBaseUrl}/api/products`, { params: httpParams });
   }
 

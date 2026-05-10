@@ -4,16 +4,12 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { Product, paiseToInr } from "../../../models/product";
 import { AdminProductsService } from "../../../services/admin-products.service";
 import { ProductsService } from "../../../services/products.service";
+import { AdminNavMenuService } from "../../../services/admin-nav-menu.service";
 
-const CATEGORIES = [
-  "power bank",
-  "covers",
-  "keyboard",
-  "mouse",
-  "pencil",
-  "airpods",
-  "whoop",
-  "controller"
+const FALLBACK_CATEGORIES = [
+  "power bank", "covers", "keyboard", "mouse", "pencil",
+  "airpods", "whoop", "controller",
+  "macbook", "mac mini", "iphone", "ipad", "accessories"
 ];
 
 @Component({
@@ -22,7 +18,7 @@ const CATEGORIES = [
   styleUrls: ["./admin-product-form.component.scss"]
 })
 export class AdminProductFormComponent implements OnInit {
-  categories = CATEGORIES;
+  categories: string[] = FALLBACK_CATEGORIES;
   mode: "create" | "edit" = "create";
   loading = false;
   error: string | null = null;
@@ -31,12 +27,14 @@ export class AdminProductFormComponent implements OnInit {
 
   form = this.fb.group({
     name: ["", [Validators.required, Validators.minLength(2)]],
-    category: [CATEGORIES[0], [Validators.required]],
+    category: [FALLBACK_CATEGORIES[0], [Validators.required]],
     description: ["", [Validators.required, Validators.minLength(5)]],
     priceInr: [0, [Validators.required, Validators.min(1)]],
     compareAtPriceInr: [null as any],
     stock: [0, [Validators.required, Validators.min(0)]],
     isTopPick: [false],
+    isHotDeal: [false],
+    isBestSelling: [false],
     isActive: [true]
   });
 
@@ -45,16 +43,32 @@ export class AdminProductFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private adminApi: AdminProductsService,
-    private productsApi: ProductsService
+    private productsApi: ProductsService,
+    private navMenuApi: AdminNavMenuService
   ) {}
 
   ngOnInit(): void {
+    this.loadCategories();
     const idParam = this.route.snapshot.paramMap.get("id");
     if (idParam) {
       this.mode = "edit";
       this.productId = Number(idParam);
       this.loadExisting(this.productId);
     }
+  }
+
+  private loadCategories() {
+    this.navMenuApi.list().subscribe({
+      next: (menus) => {
+        const slugs = menus
+          .flatMap((m) => m.items)
+          .filter((i) => i.isActive)
+          .map((i) => i.categorySlug);
+        const unique = [...new Set([...slugs, ...FALLBACK_CATEGORIES])];
+        this.categories = unique;
+      },
+      error: () => { /* keep fallback */ }
+    });
   }
 
   private loadExisting(id: number) {
@@ -69,6 +83,8 @@ export class AdminProductFormComponent implements OnInit {
           compareAtPriceInr: p.compareAtPricePaise ? paiseToInr(p.compareAtPricePaise) : null,
           stock: p.stock,
           isTopPick: (p as any).isTopPick === true,
+          isHotDeal: (p as any).isHotDeal === true,
+          isBestSelling: (p as any).isBestSelling === true,
           isActive: p.isActive
         });
         this.loading = false;
@@ -92,6 +108,11 @@ export class AdminProductFormComponent implements OnInit {
       return;
     }
 
+    if (this.mode === "create" && !this.imageFile) {
+      this.error = "An image is required for new products.";
+      return;
+    }
+
     const v = this.form.value;
     const input = {
       name: String(v.name),
@@ -102,6 +123,8 @@ export class AdminProductFormComponent implements OnInit {
         v.compareAtPriceInr == null || v.compareAtPriceInr === "" ? undefined : Math.round(Number(v.compareAtPriceInr) * 100),
       stock: Number(v.stock) || 0,
       isTopPick: (v as any).isTopPick === true,
+      isHotDeal: (v as any).isHotDeal === true,
+      isBestSelling: (v as any).isBestSelling === true,
       isActive: (v as any).isActive === true,
       image: this.imageFile
     };

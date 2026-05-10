@@ -1,34 +1,89 @@
 .admin-auth {
-  max-width: 420px;
-  margin: 40px auto;
+  max-width: 400px;
+  margin: 80px auto 40px;
   padding: 0 16px;
+}
+
+.admin-auth h2 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #1d1d1f;
+  margin: 0 0 6px;
+  text-align: center;
+}
+
+.admin-auth > p {
+  text-align: center;
+  color: #6e6e73;
+  font-size: 14px;
+  margin: 0 0 28px;
 }
 
 .card {
   background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 14px;
-  padding: 18px;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  padding: 24px;
   display: grid;
-  gap: 10px;
+  gap: 14px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6e6e73;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 input {
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 10px;
-  padding: 10px 12px;
+  width: 100%;
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 15px;
+  color: #1d1d1f;
+  background: #fafafa;
+  transition: border-color 0.18s, background 0.18s;
+}
+
+input:focus {
+  outline: none;
+  border-color: #007aff;
+  background: #fff;
 }
 
 .btn {
   border: none;
-  border-radius: 10px;
-  background: #111;
+  border-radius: 14px;
+  background: #1d1d1f;
   color: #fff;
-  padding: 10px 12px;
+  padding: 14px 16px;
   cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  width: 100%;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.btn:hover:not(:disabled) {
+  background: #2d2d2f;
+  transform: scale(1.01);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .error {
   color: #b00020;
   margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
 }

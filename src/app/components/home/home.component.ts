@@ -1,6 +1,8 @@
 ﻿import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductsService } from '../../services/products.service';
+import { NavMenuService } from '../../services/nav-menu.service';
+import { NavMenuItem } from '../../models/nav-menu';
 import { Product as ApiProduct, fallbackImageForCategory, paiseToInr } from '../../models/product';
 import { environment } from '../../../environments/environment';
 
@@ -95,134 +97,15 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     { icon: 'fas fa-headset', title: '24/7 Support' },
     { icon: 'fas fa-undo', title: 'Easy Returns' },
     { icon: 'fas fa-medal', title: 'Best Quality' }
-  ];  // Enhanced Categories (initial phase: accessories)
-  categories: Category[] = [
-    {
-      id: 'power bank',
-      name: 'Power Bank',
-      description: 'Charge anywhere with affordable power banks.',
-      buttonText: 'Shop Now',
-      backgroundImage: 'https://images.unsplash.com/photo-1616427592793-3c1f06f3a2c3?w=800&h=1200&fit=crop&crop=center',
-      displayText: 'POWER'
-    },
-    {
-      id: 'covers',
-      name: 'Covers',
-      description: 'Protect your device with low-cost cases and covers.',
-      buttonText: 'Shop Now',
-      backgroundImage: 'https://images.unsplash.com/photo-1603317575587-6c5c5f2f1b8c?w=800&h=1200&fit=crop&crop=center',
-      displayText: 'COVERS'
-    },
-    {
-      id: 'keyboard',
-      name: 'Keyboard',
-      description: 'Wireless keyboards for tablets and laptops.',
-      buttonText: 'Shop Now',
-      backgroundImage: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&h=1200&fit=crop&crop=center',
-      displayText: 'KEYS'
-    },
-    {
-      id: 'mouse',
-      name: 'Mouse',
-      description: 'Comfortable mice for work and gaming.',
-      buttonText: 'Shop Now',
-      backgroundImage: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800&h=1200&fit=crop&crop=center',
-      displayText: 'MOUSE'
-    },
-    {
-      id: 'pencil',
-      name: 'Pencil',
-      description: 'Affordable stylus options for tablets.',
-      buttonText: 'Shop Now',
-      backgroundImage: 'https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?w=800&h=1200&fit=crop&crop=center',
-      displayText: 'PENCIL'
-    },
-    {
-      id: 'airpods',
-      name: 'AirPods',
-      description: 'Budget earbuds for everyday listening.',
-      buttonText: 'Shop Now',
-      backgroundImage: 'https://images.unsplash.com/photo-1585386959984-a4155223168e?w=800&h=1200&fit=crop&crop=center',
-      displayText: 'AUDIO'
-    },
-    {
-      id: 'whoop',
-      name: 'Whoop',
-      description: 'Fitness bands and trackers on a budget.',
-      buttonText: 'Shop Now',
-      backgroundImage: 'https://images.unsplash.com/photo-1550345332-09e3ac987658?w=800&h=1200&fit=crop&crop=center',
-      displayText: 'FIT'
-    },
-    {
-      id: 'controller',
-      name: 'Controller',
-      description: 'Bluetooth controllers for mobile and tablets.',
-      buttonText: 'Shop Now',
-      backgroundImage: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&h=1200&fit=crop&crop=center',
-      displayText: 'PLAY'
-    }
-  ];  // Top Picks
+  ];  // Categories — populated dynamically from nav menu items
+  categories: Category[] = [];  // Top Picks
   topPicksTitle = {
     main: 'Top picks,',
     subtitle: 'our best selling accessories right now.'
   };
 
-  topPicks: Product[] = [
-    {
-      id: 1,
-      name: 'MagSafe Power Bank (Compatible)',
-      image: 'https://images.unsplash.com/photo-1616427592793-3c1f06f3a2c3?w=1200&fit=crop&crop=center',
-      category: 'power bank',
-      badge: 'Deal',
-      currentPrice: 1999,
-      originalPrice: 2499
-    },
-    {
-      id: 2,
-      name: 'Silicone Case Cover',
-      image: 'https://images.unsplash.com/photo-1603317575587-6c5c5f2f1b8c?w=1200&fit=crop&crop=center',
-      category: 'covers',
-      badge: 'Popular',
-      currentPrice: 599,
-      originalPrice: 999
-    },
-    {
-      id: 3,
-      name: 'Wireless Keyboard (Mac Layout)',
-      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1200&fit=crop&crop=center',
-      category: 'keyboard',
-      badge: 'Top',
-      currentPrice: 1499,
-      originalPrice: 1999
-    },
-    {
-      id: 4,
-      name: 'Wireless Mouse',
-      image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=1200&fit=crop&crop=center',
-      category: 'mouse',
-      badge: 'Value',
-      currentPrice: 999,
-      originalPrice: 1299
-    },
-    {
-      id: 5,
-      name: 'Stylus Pencil (Compatible)',
-      image: 'https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?w=1200&fit=crop&crop=center',
-      category: 'pencil',
-      badge: 'New',
-      currentPrice: 1299,
-      originalPrice: 1799
-    },
-    {
-      id: 6,
-      name: 'True Wireless Earbuds',
-      image: 'https://images.unsplash.com/photo-1585386959984-a4155223168e?w=1200&fit=crop&crop=center',
-      category: 'airpods',
-      badge: 'Hot',
-      currentPrice: 1799,
-      originalPrice: 2499
-    }
-  ];
+  // Top Picks — populated dynamically from products with isTopPick=true
+  topPicks: Product[] = [];
   // Featured Product
   featuredProduct = {
     id: 1,
@@ -238,70 +121,11 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     subtitle: 'grab these accessories before they sell out.'
   };
 
-  hotDeals: Product[] = [
-    {
-      id: 2,
-      name: 'Silicone Case Cover',
-      category: 'Covers',
-      description: 'Soft-touch case cover with comfortable grip.',
-      currentPrice: 599,
-      originalPrice: 999,
-      image: 'https://images.unsplash.com/photo-1603317575587-6c5c5f2f1b8c?w=1200&fit=crop&crop=center',
-      badge: '-40%'
-    },
-    {
-      id: 3,
-      name: 'Wireless Keyboard (Mac Layout)',
-      category: 'Keyboard',
-      description: 'Compact wireless keyboard for tablets and laptops.',
-      currentPrice: 1499,
-      originalPrice: 1999,
-      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1200&fit=crop&crop=center',
-      badge: '-25%'
-    },
-    {
-      id: 4,
-      name: 'Wireless Mouse',
-      category: 'Mouse',
-      description: 'Ergonomic mouse for work and daily browsing.',
-      currentPrice: 999,
-      originalPrice: 1299,
-      image: 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=1200&fit=crop&crop=center',
-      badge: '-23%'
-    },
-    {
-      id: 6,
-      name: 'True Wireless Earbuds',
-      category: 'Audio',
-      description: 'Budget earbuds with charging case and clear sound.',
-      currentPrice: 1799,
-      originalPrice: 2499,
-      image: 'https://images.unsplash.com/photo-1585386959984-a4155223168e?w=1200&fit=crop&crop=center',
-      badge: '-28%'
-    }
-  ];
-  // Some Products
-  someProductsTitle = 'Some products';
-  someProducts: Product[] = [
-    {
-      id: 1,
-      name: 'MagSafe Power Bank (Compatible)',
-      category: 'Power',
-      currentPrice: 1999,
-      originalPrice: 2499,
-      image: 'https://images.unsplash.com/photo-1616427592793-3c1f06f3a2c3?w=1200&fit=crop&crop=center',
-      badge: 'Deal'
-    },
-    {
-      id: 5,
-      name: 'Stylus Pencil (Compatible)',
-      category: 'Pencil',
-      currentPrice: 1299,
-      originalPrice: 1799,
-      image: 'https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?w=1200&fit=crop&crop=center',
-      badge: 'New'
-    }
-  ];
+  // Hot Deals — populated dynamically from products with isHotDeal=true
+  hotDeals: Product[] = [];
+  // Some Products — first 2 hot deals (or top picks as fallback)
+  someProductsTitle = 'Featured';
+  someProducts: Product[] = [];
   // Accessories Section
   // Accessories Section
   // Accessories Section
@@ -338,44 +162,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   };
   // Best Selling
   bestSellingTitle = 'Best-selling products';
-  bestSellingProducts: Product[] = [
-    {
-      id: 2,
-      name: 'Silicone Case Cover',
-      category: 'Covers',
-      currentPrice: 599,
-      originalPrice: 999,
-      image: 'https://images.unsplash.com/photo-1603317575587-6c5c5f2f1b8c?w=1200&fit=crop&crop=center',
-      badge: 'Top'
-    },
-    {
-      id: 1,
-      name: 'MagSafe Power Bank (Compatible)',
-      category: 'Power',
-      currentPrice: 1999,
-      originalPrice: 2499,
-      image: 'https://images.unsplash.com/photo-1616427592793-3c1f06f3a2c3?w=1200&fit=crop&crop=center',
-      badge: 'Deal'
-    },
-    {
-      id: 6,
-      name: 'True Wireless Earbuds',
-      category: 'Audio',
-      currentPrice: 1799,
-      originalPrice: 2499,
-      image: 'https://images.unsplash.com/photo-1585386959984-a4155223168e?w=1200&fit=crop&crop=center',
-      badge: 'Hot'
-    },
-    {
-      id: 3,
-      name: 'Wireless Keyboard (Mac Layout)',
-      category: 'Keyboard',
-      currentPrice: 1499,
-      originalPrice: 1999,
-      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1200&fit=crop&crop=center',
-      badge: 'Popular'
-    }
-  ];
   // Customers
   customersTitle = {
     main: 'Happy',
@@ -406,7 +192,43 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   whatsappLink = 'https://wa.me/1234567890';
   whatsappText = 'Contact Us';
 
-  constructor(private router: Router, private productsApi: ProductsService) {
+  // Best Selling — dynamic
+  navCategoryItems: NavMenuItem[] = [];
+  selectedBsCategory: string | null = null;
+  allBestSelling: Product[] = [];
+  bestSellingLoaded = false;
+
+  get filteredBestSelling(): Product[] {
+    if (!this.selectedBsCategory) return this.allBestSelling;
+    return this.allBestSelling.filter(
+      (p) => p.category.toLowerCase() === this.selectedBsCategory!.toLowerCase()
+    );
+  }
+
+  selectBsCategory(slug: string | null): void {
+    this.selectedBsCategory = slug;
+  }
+
+  iconForCategory(slug: string): string {
+    const map: Record<string, string> = {
+      'power bank': 'fas fa-bolt',
+      'covers': 'fas fa-shield-alt',
+      'keyboard': 'fas fa-keyboard',
+      'mouse': 'fas fa-mouse',
+      'pencil': 'fas fa-pen',
+      'airpods': 'fas fa-headphones',
+      'whoop': 'fas fa-heartbeat',
+      'controller': 'fas fa-gamepad',
+      'macbook': 'fas fa-laptop',
+      'mac mini': 'fas fa-desktop',
+      'iphone': 'fas fa-mobile-alt',
+      'ipad': 'fas fa-tablet-alt',
+      'accessories': 'fas fa-star'
+    };
+    return map[slug.toLowerCase()] || 'fas fa-tag';
+  }
+
+  constructor(private router: Router, private productsApi: ProductsService, private navMenuSvc: NavMenuService) {
     // Initialize scroll dots
     this.refreshPicksDots();
   }
@@ -415,8 +237,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.initData();
     this.initAnimations();
     this.loadTopPicks();
-    this.dealsScrollDots = Array.from({ length: Math.ceil(this.hotDeals.length / 3) }, (_, i) => i);
-
+    this.loadHotDeals();
+    this.loadNavCategories();
+    this.loadBestSelling();
   }
 
   ngAfterViewInit(): void {
@@ -449,11 +272,71 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     return `${environment.apiBaseUrl}/${p.imagePath}`;
   }
 
+  private readonly categoryFallbackImages: Record<string, string> = {
+    'power bank': 'https://images.unsplash.com/photo-1616427592793-3c1f06f3a2c3?w=800&h=1200&fit=crop&crop=center',
+    'covers': 'https://images.unsplash.com/photo-1603317575587-6c5c5f2f1b8c?w=800&h=1200&fit=crop&crop=center',
+    'keyboard': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&h=1200&fit=crop&crop=center',
+    'mouse': 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800&h=1200&fit=crop&crop=center',
+    'pencil': 'https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?w=800&h=1200&fit=crop&crop=center',
+    'airpods': 'https://images.unsplash.com/photo-1585386959984-a4155223168e?w=800&h=1200&fit=crop&crop=center',
+    'whoop': 'https://images.unsplash.com/photo-1550345332-09e3ac987658?w=800&h=1200&fit=crop&crop=center',
+    'controller': 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&h=1200&fit=crop&crop=center',
+    'macbook': 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&h=1200&fit=crop&crop=center',
+    'mac mini': 'https://images.unsplash.com/photo-1527814050087-3793815479db?w=800&h=1200&fit=crop&crop=center',
+    'iphone': 'https://images.unsplash.com/photo-1603317575587-6c5c5f2f1b8c?w=800&h=1200&fit=crop&crop=center',
+    'ipad': 'https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?w=800&h=1200&fit=crop&crop=center',
+    'accessories': 'https://images.unsplash.com/photo-1585386959984-a4155223168e?w=800&h=1200&fit=crop&crop=center'
+  };
+
+  private loadNavCategories(): void {
+    this.navMenuSvc.list().subscribe({
+      next: (menus) => {
+        const seen = new Set<string>();
+        const items: NavMenuItem[] = [];
+        for (const menu of menus) {
+          if (!menu.isActive) continue;
+          for (const item of menu.items) {
+            if (!item.isActive || seen.has(item.categorySlug)) continue;
+            seen.add(item.categorySlug);
+            items.push(item);
+          }
+        }
+        this.navCategoryItems = items;
+        this.categories = items.map((item) => ({
+          id: item.categorySlug,
+          name: item.name,
+          description: item.categoryDescription || 'Explore our collection.',
+          buttonText: item.categoryButtonText || 'Shop Now',
+          backgroundImage: item.backgroundImage || this.categoryFallbackImages[item.categorySlug.toLowerCase()] || 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&h=1200&fit=crop&crop=center',
+          displayText: item.name.toUpperCase().substring(0, 6)
+        }));
+      },
+      error: () => {}
+    });
+  }
+
+  private loadBestSelling(): void {
+    this.productsApi.list({ bestSelling: true }).subscribe({
+      next: (products) => {
+        this.allBestSelling = products.map((p) => ({
+          id: p.id,
+          name: p.name,
+          image: this.imageUrlForProduct(p),
+          category: p.category,
+          badge: p.compareAtPricePaise ? 'Sale' : '',
+          currentPrice: paiseToInr(p.pricePaise),
+          originalPrice: p.compareAtPricePaise ? paiseToInr(p.compareAtPricePaise) : undefined
+        }));
+        this.bestSellingLoaded = true;
+      },
+      error: () => { this.bestSellingLoaded = true; }
+    });
+  }
+
   private loadTopPicks(): void {
     this.productsApi.list({ topPick: true }).subscribe({
       next: (products) => {
         if (!Array.isArray(products) || products.length === 0) return;
-
         this.topPicks = products.map((p) => ({
           id: p.id,
           name: p.name,
@@ -463,12 +346,37 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
           currentPrice: paiseToInr(p.pricePaise),
           originalPrice: p.compareAtPricePaise ? paiseToInr(p.compareAtPricePaise) : undefined
         }));
-
         this.refreshPicksDots();
       },
-      error: () => {
-        // keep fallback picks
-      }
+      error: () => {}
+    });
+  }
+
+  private loadHotDeals(): void {
+    this.productsApi.list({ hotDeal: true }).subscribe({
+      next: (products) => {
+        if (!Array.isArray(products) || products.length === 0) return;
+        this.hotDeals = products.map((p) => {
+          const discount = p.compareAtPricePaise
+            ? Math.round((1 - p.pricePaise / p.compareAtPricePaise) * 100)
+            : 0;
+          return {
+            id: p.id,
+            name: p.name,
+            image: this.imageUrlForProduct(p),
+            category: p.category,
+            description: p.description,
+            badge: discount > 0 ? `-${discount}%` : 'Deal',
+            currentPrice: paiseToInr(p.pricePaise),
+            originalPrice: p.compareAtPricePaise ? paiseToInr(p.compareAtPricePaise) : undefined
+          };
+        });
+        this.dealsScrollDots = Array.from({ length: Math.ceil(this.hotDeals.length / 3) }, (_, i) => i);
+        if (this.someProducts.length === 0) {
+          this.someProducts = this.hotDeals.slice(0, 2);
+        }
+      },
+      error: () => {}
     });
   }
 

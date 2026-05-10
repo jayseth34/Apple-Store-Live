@@ -14,4 +14,8 @@ export class AdminOrdersService {
   updateStatus(id: number, status: string) {
     return this.http.put<Order>(`${environment.apiBaseUrl}/api/admin/orders/${id}/status`, { status });
   }
+
+  delete(id: number) {
+    return this.http.delete<{ ok: boolean }>(`${environment.apiBaseUrl}/api/admin/orders/${id}`);
+  }
 }

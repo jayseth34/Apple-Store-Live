@@ -1,0 +1,161 @@
+<div class="admin-page">
+  <div class="page-header">
+    <div class="title">
+      <h1>Navigation Menus</h1>
+      <p>Manage navbar menus and sub-items. Changes appear on the storefront immediately.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-outline" (click)="goProducts()">Products</button>
+      <button class="btn-outline" (click)="goOrders()">Orders</button>
+      <button class="btn" (click)="showAddMenu = !showAddMenu">
+        {{ showAddMenu ? 'Cancel' : '+ Add Menu' }}
+      </button>
+    </div>
+  </div>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+  <p class="loading" *ngIf="loading">Loading…</p>
+
+  <!-- Add Menu Form -->
+  <div class="form-card" *ngIf="showAddMenu">
+    <h3 class="form-title">New Main Menu</h3>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Menu Name</label>
+        <input [(ngModel)]="addMenuForm.name" (ngModelChange)="onAddMenuNameChange()" placeholder="e.g. Apple Products" />
+      </div>
+      <div class="form-field">
+        <label>Slug (auto)</label>
+        <input [(ngModel)]="addMenuForm.slug" placeholder="e.g. apple-products" />
+      </div>
+      <div class="form-field narrow">
+        <label>Order</label>
+        <input type="number" [(ngModel)]="addMenuForm.order" />
+      </div>
+      <div class="form-field narrow">
+        <label>Active</label>
+        <select [(ngModel)]="addMenuForm.isActive">
+          <option [ngValue]="true">Yes</option>
+          <option [ngValue]="false">No</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn" (click)="submitAddMenu()" [disabled]="addMenuLoading">
+        {{ addMenuLoading ? 'Saving…' : 'Create Menu' }}
+      </button>
+      <button class="btn-outline" (click)="showAddMenu = false">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Menu List -->
+  <div class="menu-list" *ngIf="!loading">
+    <div class="empty-state" *ngIf="menus.length === 0">
+      <p>No menus yet. Click "+ Add Menu" to create your first navigation menu.</p>
+    </div>
+
+    <div class="menu-card" *ngFor="let menu of menus">
+      <!-- Menu Header -->
+      <div class="menu-header">
+        <div class="menu-info" *ngIf="editingMenuId !== menu.id">
+          <span class="menu-name">{{ menu.name }}</span>
+          <span class="slug-chip">{{ menu.slug }}</span>
+          <span class="order-chip">order: {{ menu.order }}</span>
+          <span class="status-chip" [class.active]="menu.isActive">{{ menu.isActive ? 'Active' : 'Hidden' }}</span>
+        </div>
+
+        <!-- Inline edit menu -->
+        <div class="edit-row" *ngIf="editingMenuId === menu.id">
+          <input [(ngModel)]="editMenuForm.name" placeholder="Menu name" />
+          <input [(ngModel)]="editMenuForm.slug" placeholder="slug" />
+          <input type="number" [(ngModel)]="editMenuForm.order" style="width:70px" placeholder="Order" />
+          <select [(ngModel)]="editMenuForm.isActive">
+            <option [ngValue]="true">Active</option>
+            <option [ngValue]="false">Hidden</option>
+          </select>
+          <button class="btn btn-sm" (click)="submitEditMenu(menu.id)">Save</button>
+          <button class="btn-outline btn-sm" (click)="editingMenuId = null">Cancel</button>
+        </div>
+
+        <div class="menu-actions" *ngIf="editingMenuId !== menu.id">
+          <button class="btn-outline btn-sm" (click)="startEditMenu(menu)">Edit</button>
+          <button class="btn-danger btn-sm" (click)="deleteMenu(menu)">Delete</button>
+        </div>
+      </div>
+
+      <!-- Items list -->
+      <div class="items-section">
+        <div class="items-header">
+          <span class="items-label">Sub-items ({{ menu.items.length }})</span>
+          <button class="btn-add-item" (click)="toggleAddItem(menu.id)">
+            {{ showAddItemForMenu === menu.id ? '− Cancel' : '+ Add Item' }}
+          </button>
+        </div>
+
+        <!-- Add item form -->
+        <div class="item-form" *ngIf="showAddItemForMenu === menu.id">
+          <div class="item-form-grid">
+            <input [(ngModel)]="addItemForm.name" (ngModelChange)="onAddItemNameChange()" placeholder="Item name (e.g. MacBook)" />
+            <input [(ngModel)]="addItemForm.categorySlug" placeholder="Category slug (e.g. macbook)" />
+            <input type="number" [(ngModel)]="addItemForm.order" style="width:70px" placeholder="Order" />
+            <select [(ngModel)]="addItemForm.isActive">
+              <option [ngValue]="true">Active</option>
+              <option [ngValue]="false">Hidden</option>
+            </select>
+          </div>
+          <div class="item-form-extras">
+            <input [(ngModel)]="addItemForm.backgroundImage" placeholder="Category card image URL (for home page)" />
+            <input [(ngModel)]="addItemForm.categoryDescription" placeholder="Category description (for home page)" />
+            <input [(ngModel)]="addItemForm.categoryButtonText" placeholder="Button text (e.g. Shop Now)" />
+          </div>
+          <button class="btn btn-sm" (click)="submitAddItem(menu.id)" [disabled]="addItemLoading">
+            {{ addItemLoading ? 'Saving…' : 'Add' }}
+          </button>
+        </div>
+
+        <!-- Items table -->
+        <div class="items-list" *ngIf="menu.items && menu.items.length > 0">
+          <div class="item-row" *ngFor="let item of menu.items" [class.is-editing]="editingItemId === item.id">
+            <!-- View mode -->
+            <ng-container *ngIf="editingItemId !== item.id">
+              <span class="item-name">{{ item.name }}</span>
+              <span class="slug-chip small">{{ item.categorySlug }}</span>
+              <span class="order-chip small">{{ item.order }}</span>
+              <span class="status-chip small" [class.active]="item.isActive">{{ item.isActive ? 'Active' : 'Hidden' }}</span>
+              <div class="item-actions">
+                <button class="btn-outline btn-xs" (click)="startEditItem(item, menu.id)">Edit</button>
+                <button class="btn-danger btn-xs" (click)="deleteItem(menu.id, item)">Delete</button>
+              </div>
+            </ng-container>
+
+            <!-- Edit mode -->
+            <ng-container *ngIf="editingItemId === item.id">
+              <div class="item-edit-grid">
+                <input [(ngModel)]="editItemForm.name" placeholder="Name" />
+                <input [(ngModel)]="editItemForm.categorySlug" placeholder="Category slug" />
+                <input type="number" [(ngModel)]="editItemForm.order" style="width:70px" />
+                <select [(ngModel)]="editItemForm.isActive">
+                  <option [ngValue]="true">Active</option>
+                  <option [ngValue]="false">Hidden</option>
+                </select>
+              </div>
+              <div class="item-edit-extras">
+                <input [(ngModel)]="editItemForm.backgroundImage" placeholder="Category card image URL" />
+                <input [(ngModel)]="editItemForm.categoryDescription" placeholder="Category description" />
+                <input [(ngModel)]="editItemForm.categoryButtonText" placeholder="Button text" />
+              </div>
+              <div class="item-edit-actions">
+                <button class="btn btn-xs" (click)="submitEditItem(menu.id, item.id)">Save</button>
+                <button class="btn-outline btn-xs" (click)="editingItemId = null">Cancel</button>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="no-items" *ngIf="!menu.items || menu.items.length === 0">
+          No items yet. Click "+ Add Item" to add sub-menu entries.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

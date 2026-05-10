@@ -25,6 +25,7 @@ export class AdminOrdersComponent implements OnInit {
   loading = false;
   error: string | null = null;
   statuses = STATUSES;
+  deletingId: number | null = null;
 
   constructor(private api: AdminOrdersService, private router: Router) {}
 
@@ -95,8 +96,27 @@ export class AdminOrdersComponent implements OnInit {
     });
   }
 
+  deleteOrder(o: Order) {
+    if (!confirm(`Permanently delete order #${o.id}?\n\nThis cannot be undone.`)) return;
+    this.deletingId = o.id;
+    this.api.delete(o.id).subscribe({
+      next: () => {
+        this.orders = this.orders.filter((x) => x.id !== o.id);
+        this.deletingId = null;
+      },
+      error: () => {
+        this.error = "Failed to delete order";
+        this.deletingId = null;
+      }
+    });
+  }
+
   goProducts() {
     this.router.navigateByUrl("/admin/products");
+  }
+
+  goDbExplorer() {
+    this.router.navigateByUrl("/admin/db");
   }
 
   setStatus(o: Order, status: string) {

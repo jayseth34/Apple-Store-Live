@@ -1,7 +1,13 @@
 <div class="admin-page">
   <div class="topbar">
-    <h2>Admin Orders</h2>
-    <button class="btn-outline" (click)="goProducts()">Products</button>
+    <div class="title">
+      <h2>Orders</h2>
+      <p>Manage and track customer orders.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-outline" (click)="goDbExplorer()">DB Explorer</button>
+      <button class="btn-outline" (click)="goProducts()">← Products</button>
+    </div>
   </div>
 
   <p class="error" *ngIf="error">{{ error }}</p>
@@ -16,6 +22,7 @@
       <div>Amount</div>
       <div>Status</div>
       <div>Payment</div>
+      <div></div>
     </div>
 
     <div class="row" *ngFor="let o of orders">
@@ -59,6 +66,17 @@
         <div class="title">{{ o.isPaid ? 'PAID' : 'NOT PAID' }}</div>
         <div class="sub">RP order: {{ o.razorpayOrderId || '-' }}</div>
         <div class="sub">RP payment: {{ o.razorpayPaymentId || '-' }}</div>
+      </div>
+
+      <div class="row-actions">
+        <button
+          class="btn-danger"
+          (click)="deleteOrder(o)"
+          [disabled]="deletingId === o.id"
+          title="Permanently delete this order"
+        >
+          {{ deletingId === o.id ? 'Deleting…' : 'Delete' }}
+        </button>
       </div>
     </div>
   </div>

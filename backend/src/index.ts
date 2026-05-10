@@ -22,7 +22,18 @@ import {
   decrementProductStock,
   findOrderByRazorpayOrderId,
   listOrders,
-  sha256Hex
+  sha256Hex,
+  listNavMenus,
+  createNavMenu,
+  updateNavMenu,
+  deleteNavMenu,
+  createNavMenuItem,
+  updateNavMenuItem,
+  deleteNavMenuItem,
+  hardDeleteOrder,
+  hardDeleteFromCollection,
+  listCollection,
+  VALID_COLLECTIONS
 } from "./lib/db.js";
 
 const app = express();
@@ -132,6 +143,33 @@ app.put("/api/admin/orders/:id/status", requireAdmin, async (req, res) => {
   return res.json(updated);
 });
 
+app.delete("/api/admin/orders/:id", requireAdmin, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isFinite(id)) return res.status(400).json({ error: "Invalid id" });
+  const ok = await hardDeleteOrder(id);
+  if (!ok) return res.status(404).json({ error: "Not found" });
+  return res.json({ ok: true });
+});
+
+// ── DB Explorer routes ─────────────────────────────────────────────────────
+
+app.get("/api/admin/db/:collection", requireAdmin, async (req, res) => {
+  const col = req.params.collection as any;
+  if (!VALID_COLLECTIONS.includes(col)) return res.status(400).json({ error: "Invalid collection" });
+  const data = await listCollection(col);
+  return res.json(data);
+});
+
+app.delete("/api/admin/db/:collection/:id", requireAdmin, async (req, res) => {
+  const col = req.params.collection as any;
+  const id = Number(req.params.id);
+  if (!VALID_COLLECTIONS.includes(col)) return res.status(400).json({ error: "Invalid collection" });
+  if (!Number.isFinite(id)) return res.status(400).json({ error: "Invalid id" });
+  const ok = await hardDeleteFromCollection(col, id);
+  if (!ok) return res.status(404).json({ error: "Not found" });
+  return res.json({ ok: true });
+});
+
 app.get("/api/products", async (req, res) => {
   const category = typeof req.query.category === "string" ? req.query.category : undefined;
   const q = typeof req.query.q === "string" ? req.query.q : undefined;
@@ -141,7 +179,17 @@ app.get("/api/products", async (req, res) => {
       ? ["1", "true", "yes"].includes(req.query.topPick.toLowerCase())
       : undefined;
 
-  const products = await listActiveProducts({ category, q, topPick });
+  const hotDeal =
+    typeof req.query.hotDeal === "string"
+      ? ["1", "true", "yes"].includes(req.query.hotDeal.toLowerCase())
+      : undefined;
+
+  const bestSelling =
+    typeof req.query.bestSelling === "string"
+      ? ["1", "true", "yes"].includes(req.query.bestSelling.toLowerCase())
+      : undefined;
+
+  const products = await listActiveProducts({ category, q, topPick, hotDeal, bestSelling });
   return res.json(products);
 });
 
@@ -175,6 +223,8 @@ const AdminProductSchema = z.object({
   ),
   stock: z.coerce.number().int().nonnegative().default(0),
   isTopPick: Bool.default(false),
+  isHotDeal: Bool.default(false),
+  isBestSelling: Bool.default(false),
   isActive: Bool.default(true)
 });
 
@@ -434,6 +484,95 @@ app.get("/api/orders/:publicId", async (req, res) => {
   const products = await listAllProducts();
   const productById = new Map(products.map((p) => [p.id, p] as const));
   return res.json(enrichOrder(order, productById));
+});
+
+// ── Nav Menu routes ────────────────────────────────────────────────────────
+
+app.get("/api/nav-menus", async (_req, res) => {
+  const menus = await listNavMenus(true);
+  return res.json(menus);
+});
+
+app.get("/api/admin/nav-menus", requireAdmin, async (_req, res) => {
+  const menus = await listNavMenus(false);
+  return res.json(menus);
+});
+
+const NavMenuSchema = z.object({
+  name: z.string().min(1),
+  slug: z.string().min(1),
+  order: z.coerce.number().int().nonnegative().default(0),
+  isActive: z.preprocess((v) => {
+    if (typeof v === "boolean") return v;
+    if (typeof v === "string") return ["1","true","yes"].includes(v.toLowerCase());
+    return v;
+  }, z.boolean().default(true))
+});
+
+const NavMenuItemSchema = z.object({
+  name: z.string().min(1),
+  categorySlug: z.string().min(1),
+  order: z.coerce.number().int().nonnegative().default(0),
+  isActive: z.preprocess((v) => {
+    if (typeof v === "boolean") return v;
+    if (typeof v === "string") return ["1","true","yes"].includes(v.toLowerCase());
+    return v;
+  }, z.boolean().default(true)),
+  backgroundImage: z.string().url().optional().or(z.literal("")),
+  categoryDescription: z.string().optional(),
+  categoryButtonText: z.string().optional()
+});
+
+app.post("/api/admin/nav-menus", requireAdmin, async (req, res) => {
+  const parsed = NavMenuSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "Invalid body", details: parsed.error.flatten() });
+  const menu = await createNavMenu(parsed.data);
+  return res.status(201).json(menu);
+});
+
+app.put("/api/admin/nav-menus/:id", requireAdmin, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isFinite(id)) return res.status(400).json({ error: "Invalid id" });
+  const parsed = NavMenuSchema.partial().safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "Invalid body", details: parsed.error.flatten() });
+  const updated = await updateNavMenu(id, parsed.data);
+  if (!updated) return res.status(404).json({ error: "Not found" });
+  return res.json(updated);
+});
+
+app.delete("/api/admin/nav-menus/:id", requireAdmin, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isFinite(id)) return res.status(400).json({ error: "Invalid id" });
+  const ok = await deleteNavMenu(id);
+  if (!ok) return res.status(404).json({ error: "Not found" });
+  return res.json({ ok: true });
+});
+
+app.post("/api/admin/nav-menus/:id/items", requireAdmin, async (req, res) => {
+  const menuId = Number(req.params.id);
+  if (!Number.isFinite(menuId)) return res.status(400).json({ error: "Invalid id" });
+  const parsed = NavMenuItemSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "Invalid body", details: parsed.error.flatten() });
+  const item = await createNavMenuItem({ ...parsed.data, menuId });
+  return res.status(201).json(item);
+});
+
+app.put("/api/admin/nav-menus/:menuId/items/:id", requireAdmin, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isFinite(id)) return res.status(400).json({ error: "Invalid id" });
+  const parsed = NavMenuItemSchema.partial().safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "Invalid body", details: parsed.error.flatten() });
+  const updated = await updateNavMenuItem(id, parsed.data);
+  if (!updated) return res.status(404).json({ error: "Not found" });
+  return res.json(updated);
+});
+
+app.delete("/api/admin/nav-menus/:menuId/items/:id", requireAdmin, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isFinite(id)) return res.status(400).json({ error: "Invalid id" });
+  const ok = await deleteNavMenuItem(id);
+  if (!ok) return res.status(404).json({ error: "Not found" });
+  return res.json({ ok: true });
 });
 
 await initDb();

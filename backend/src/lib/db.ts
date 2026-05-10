@@ -13,8 +13,34 @@ export type Product = {
   compareAtPricePaise?: number;
   imagePath?: string;
   isTopPick?: boolean;
+  isHotDeal?: boolean;
+  isBestSelling?: boolean;
   stock: number;
   isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type NavMenu = {
+  id: number;
+  name: string;
+  slug: string;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type NavMenuItem = {
+  id: number;
+  menuId: number;
+  name: string;
+  categorySlug: string;
+  order: number;
+  isActive: boolean;
+  backgroundImage?: string;
+  categoryDescription?: string;
+  categoryButtonText?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -62,15 +88,23 @@ export type Order = {
 type Data = {
   products: Product[];
   orders: Order[];
+  navMenus: NavMenu[];
+  navMenuItems: NavMenuItem[];
   nextProductId: number;
   nextOrderId: number;
+  nextNavMenuId: number;
+  nextNavMenuItemId: number;
 };
 
 const defaultData: Data = {
   products: [],
   orders: [],
+  navMenus: [],
+  navMenuItems: [],
   nextProductId: 1,
-  nextOrderId: 1
+  nextOrderId: 1,
+  nextNavMenuId: 1,
+  nextNavMenuItemId: 1
 };
 
 const dataDir = path.join(process.cwd(), "data");
@@ -91,6 +125,11 @@ export async function initDb() {
   if (!Array.isArray(db.data.products) || !Array.isArray(db.data.orders)) {
     db.data = { ...defaultData };
   }
+
+  if (!Array.isArray(db.data.navMenus)) db.data.navMenus = [];
+  if (!Array.isArray(db.data.navMenuItems)) db.data.navMenuItems = [];
+  if (!db.data.nextNavMenuId) db.data.nextNavMenuId = 1;
+  if (!db.data.nextNavMenuItemId) db.data.nextNavMenuItemId = 1;
 
   if (db.data.products.length === 0) {
     const now = new Date().toISOString();
@@ -191,6 +230,33 @@ export async function initDb() {
 
     await db.write();
   }
+  if (db.data.navMenus.length === 0) {
+    const now = new Date().toISOString();
+    const appleMenu: NavMenu = {
+      id: db.data.nextNavMenuId++,
+      name: "Apple Products",
+      slug: "apple-products",
+      order: 1,
+      isActive: true,
+      createdAt: now,
+      updatedAt: now
+    };
+    db.data.navMenus.push(appleMenu);
+
+    const appleItems: Omit<NavMenuItem, "id">[] = [
+      { menuId: appleMenu.id, name: "MacBook", categorySlug: "macbook", order: 1, isActive: true, createdAt: now, updatedAt: now },
+      { menuId: appleMenu.id, name: "Mac Mini", categorySlug: "mac mini", order: 2, isActive: true, createdAt: now, updatedAt: now },
+      { menuId: appleMenu.id, name: "AirPods", categorySlug: "airpods", order: 3, isActive: true, createdAt: now, updatedAt: now },
+      { menuId: appleMenu.id, name: "iPhone", categorySlug: "iphone", order: 4, isActive: true, createdAt: now, updatedAt: now },
+      { menuId: appleMenu.id, name: "iPads", categorySlug: "ipad", order: 5, isActive: true, createdAt: now, updatedAt: now },
+      { menuId: appleMenu.id, name: "Accessories", categorySlug: "accessories", order: 6, isActive: true, createdAt: now, updatedAt: now }
+    ];
+    for (const item of appleItems) {
+      db.data.navMenuItems.push({ id: db.data.nextNavMenuItemId++, ...item });
+    }
+    await db.write();
+  }
+
   const seedNames = new Set([
     "MagSafe Power Bank (Compatible)",
     "Silicone Case Cover",
@@ -213,15 +279,19 @@ export async function initDb() {
   }
 }
 
-export async function listActiveProducts(params: { category?: string; q?: string; topPick?: boolean }) {
+export async function listActiveProducts(params: { category?: string; q?: string; topPick?: boolean; hotDeal?: boolean; bestSelling?: boolean }) {
   await db.read();
   const category = params.category?.trim().toLowerCase();
   const q = params.q?.trim().toLowerCase();
   const topPick = params.topPick === true;
+  const hotDeal = params.hotDeal === true;
+  const bestSelling = params.bestSelling === true;
 
   return db.data!.products
     .filter((p) => p.isActive)
     .filter((p) => (topPick ? !!p.isTopPick : true))
+    .filter((p) => (hotDeal ? !!p.isHotDeal : true))
+    .filter((p) => (bestSelling ? !!p.isBestSelling : true))
     .filter((p) => (category ? p.category.toLowerCase() === category : true))
     .filter((p) =>
       q ? p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q) : true
@@ -309,6 +379,76 @@ export async function listOrders() {
   return [...db.data!.orders].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 }
 
+export async function listNavMenus(activeOnly = false) {
+  await db.read();
+  const menus = activeOnly
+    ? db.data!.navMenus.filter((m) => m.isActive)
+    : [...db.data!.navMenus];
+  menus.sort((a, b) => a.order - b.order);
+
+  return menus.map((menu) => ({
+    ...menu,
+    items: db.data!.navMenuItems
+      .filter((i) => i.menuId === menu.id && (!activeOnly || i.isActive))
+      .sort((a, b) => a.order - b.order)
+  }));
+}
+
+export async function createNavMenu(input: Omit<NavMenu, "id" | "createdAt" | "updatedAt">) {
+  await db.read();
+  const now = new Date().toISOString();
+  const menu: NavMenu = { id: db.data!.nextNavMenuId++, ...input, createdAt: now, updatedAt: now };
+  db.data!.navMenus.push(menu);
+  await db.write();
+  return menu;
+}
+
+export async function updateNavMenu(id: number, patch: Partial<Omit<NavMenu, "id" | "createdAt">>) {
+  await db.read();
+  const menu = db.data!.navMenus.find((m) => m.id === id);
+  if (!menu) return null;
+  Object.assign(menu, patch, { updatedAt: new Date().toISOString() });
+  await db.write();
+  return menu;
+}
+
+export async function deleteNavMenu(id: number) {
+  await db.read();
+  const idx = db.data!.navMenus.findIndex((m) => m.id === id);
+  if (idx === -1) return false;
+  db.data!.navMenus.splice(idx, 1);
+  db.data!.navMenuItems = db.data!.navMenuItems.filter((i) => i.menuId !== id);
+  await db.write();
+  return true;
+}
+
+export async function createNavMenuItem(input: Omit<NavMenuItem, "id" | "createdAt" | "updatedAt">) {
+  await db.read();
+  const now = new Date().toISOString();
+  const item: NavMenuItem = { id: db.data!.nextNavMenuItemId++, ...input, createdAt: now, updatedAt: now };
+  db.data!.navMenuItems.push(item);
+  await db.write();
+  return item;
+}
+
+export async function updateNavMenuItem(id: number, patch: Partial<Omit<NavMenuItem, "id" | "createdAt">>) {
+  await db.read();
+  const item = db.data!.navMenuItems.find((i) => i.id === id);
+  if (!item) return null;
+  Object.assign(item, patch, { updatedAt: new Date().toISOString() });
+  await db.write();
+  return item;
+}
+
+export async function deleteNavMenuItem(id: number) {
+  await db.read();
+  const idx = db.data!.navMenuItems.findIndex((i) => i.id === id);
+  if (idx === -1) return false;
+  db.data!.navMenuItems.splice(idx, 1);
+  await db.write();
+  return true;
+}
+
 export async function decrementProductStock(productId: number, quantity: number) {
   await db.read();
   const product = db.data!.products.find((p) => p.id === productId);
@@ -317,6 +457,33 @@ export async function decrementProductStock(productId: number, quantity: number)
   product.updatedAt = new Date().toISOString();
   await db.write();
   return product;
+}
+
+export async function hardDeleteOrder(id: number) {
+  await db.read();
+  const idx = db.data!.orders.findIndex((o) => o.id === id);
+  if (idx === -1) return false;
+  db.data!.orders.splice(idx, 1);
+  await db.write();
+  return true;
+}
+
+type CollectionKey = "products" | "orders" | "navMenus" | "navMenuItems";
+export const VALID_COLLECTIONS: CollectionKey[] = ["products", "orders", "navMenus", "navMenuItems"];
+
+export async function listCollection(collection: CollectionKey) {
+  await db.read();
+  return [...(db.data![collection] as Array<{ id: number }>)];
+}
+
+export async function hardDeleteFromCollection(collection: CollectionKey, id: number) {
+  await db.read();
+  const arr = db.data![collection] as Array<{ id: number }>;
+  const idx = arr.findIndex((item) => item.id === id);
+  if (idx === -1) return false;
+  arr.splice(idx, 1);
+  await db.write();
+  return true;
 }
 
 

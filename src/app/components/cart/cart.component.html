@@ -41,55 +41,84 @@
       </div>
 
       <div class="side">
+        <!-- Step 1: Delivery details -->
         <div class="card">
-          <div class="row">
-            <div class="label">Total</div>
-            <div class="value">&#8377;{{ inr(totalPaise()) | number: '1.0-2' }}</div>
+          <div class="delivery-head">
+            <div class="delivery-title">
+              <span class="step-badge">1</span>
+              <h3>Delivery details</h3>
+            </div>
+            <span class="done-badge" *ngIf="isCustomerValid()">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 6l3 3 5-5" stroke="#1a7f37" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Complete
+            </span>
           </div>
-          <button class="btn" (click)="checkoutAll()" [disabled]="payingAll">{{ payingAll ? 'Opening...' : 'Checkout all' }}</button>
-          <div class="hint">Pay once for all items and receive them together.</div>
-        </div>
-
-        <div class="card">
-          <h3>Delivery details</h3>
           <div class="form-grid">
             <div>
-              <label>Name</label>
-              <input [(ngModel)]="customer.name" (ngModelChange)="saveCustomer()" />
+              <label>Name *</label>
+              <input [(ngModel)]="customer.name" (ngModelChange)="saveCustomer()" placeholder="Full name" />
             </div>
             <div>
-              <label>Phone</label>
-              <input [(ngModel)]="customer.phone" (ngModelChange)="saveCustomer()" />
+              <label>Phone *</label>
+              <input [(ngModel)]="customer.phone" (ngModelChange)="saveCustomer()" placeholder="10-digit number" />
             </div>
             <div class="full">
               <label>Email (optional)</label>
-              <input [(ngModel)]="customer.email" (ngModelChange)="saveCustomer()" />
+              <input [(ngModel)]="customer.email" (ngModelChange)="saveCustomer()" placeholder="your@email.com" />
             </div>
             <div class="full">
-              <label>Address line 1</label>
-              <input [(ngModel)]="customer.address1" (ngModelChange)="saveCustomer()" />
+              <label>Address line 1 *</label>
+              <input [(ngModel)]="customer.address1" (ngModelChange)="saveCustomer()" placeholder="House / flat, street" />
             </div>
             <div class="full">
               <label>Address line 2 (optional)</label>
-              <input [(ngModel)]="customer.address2" (ngModelChange)="saveCustomer()" />
+              <input [(ngModel)]="customer.address2" (ngModelChange)="saveCustomer()" placeholder="Landmark, area" />
             </div>
             <div>
-              <label>City</label>
-              <input [(ngModel)]="customer.city" (ngModelChange)="saveCustomer()" />
+              <label>City *</label>
+              <input [(ngModel)]="customer.city" (ngModelChange)="saveCustomer()" placeholder="City" />
             </div>
             <div>
-              <label>State</label>
-              <input [(ngModel)]="customer.state" (ngModelChange)="saveCustomer()" />
+              <label>State *</label>
+              <input [(ngModel)]="customer.state" (ngModelChange)="saveCustomer()" placeholder="State" />
             </div>
             <div>
-              <label>Pincode</label>
-              <input [(ngModel)]="customer.pincode" (ngModelChange)="saveCustomer()" />
+              <label>Pincode *</label>
+              <input [(ngModel)]="customer.pincode" (ngModelChange)="saveCustomer()" placeholder="6-digit code" />
             </div>
             <div>
-              <label>Country</label>
-              <input [(ngModel)]="customer.country" (ngModelChange)="saveCustomer()" />
+              <label>Country *</label>
+              <input [(ngModel)]="customer.country" (ngModelChange)="saveCustomer()" placeholder="India" />
             </div>
           </div>
+        </div>
+
+        <!-- Step 2: Order summary + checkout -->
+        <div class="card">
+          <div class="delivery-head" style="margin-bottom:14px">
+            <div class="delivery-title">
+              <span class="step-badge">2</span>
+              <h3>Order summary</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="label">Total ({{ items.length }} item{{ items.length !== 1 ? 's' : '' }})</div>
+            <div class="value">&#8377;{{ inr(totalPaise()) | number: '1.0-2' }}</div>
+          </div>
+          <p class="delivery-warn" *ngIf="!isCustomerValid()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0">
+              <path d="M7 1L13 12H1L7 1Z" stroke="#a05000" stroke-width="1.4" stroke-linejoin="round"/>
+              <path d="M7 5.5V8" stroke="#a05000" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="7" cy="10" r="0.7" fill="#a05000"/>
+            </svg>
+            Fill delivery details above first
+          </p>
+          <button class="btn" (click)="checkoutAll()" [disabled]="payingAll">
+            {{ payingAll ? 'Opening...' : 'Checkout all items' }}
+          </button>
+          <div class="hint">Pay once for all items and receive them together.</div>
           <p class="error" *ngIf="paymentStatus">{{ paymentStatus }}</p>
         </div>
       </div>
