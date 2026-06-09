@@ -85,9 +85,91 @@
         <input type="file" (change)="onFileChange($event)" [required]="mode === 'create'" />
         <div class="sub" *ngIf="imageFile">{{ imageFile.name }}</div>
       </div>
+
+      <div class="full">
+        <button type="button" class="btn-outline" (click)="expandVariantsSection = !expandVariantsSection" style="width: 100%; margin-top: 20px;">
+          {{ expandVariantsSection ? '▼' : '▶' }} Product Variants ({{ variants.length }})
+        </button>
+      </div>
     </div>
 
-    <button class="btn" type="submit" [disabled]="loading">
+    <div *ngIf="expandVariantsSection" class="card" style="margin-top: 20px; background: #f9f9f9;">
+      <h3>Product Variants</h3>
+      <p style="color: #666; font-size: 13px; margin-bottom: 15px;">
+        Add different colors, sizes, or versions of this product. Customers can choose a variant when purchasing.
+      </p>
+
+      <div *ngIf="variants.length === 0" style="text-align: center; color: #999; padding: 20px;">
+        No variants yet. Click "Add Variant" to create one.
+      </div>
+
+      <div *ngFor="let variant of variants; let i = index" class="card" style="margin-bottom: 15px; padding: 15px; background: white; border: 1px solid #ddd;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <h4 style="margin: 0;">Variant {{ i + 1 }}</h4>
+          <button type="button" class="btn-outline" (click)="removeVariant(i)" style="padding: 5px 10px; font-size: 12px;">
+            Remove
+          </button>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label>Variant Name</label>
+            <input
+              type="text"
+              [(ngModel)]="variant.name"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="e.g., Black, 256GB, Large"
+            />
+          </div>
+
+          <div>
+            <label>Price (&#8377;)</label>
+            <input
+              type="number"
+              [ngModel]="variantPriceInr(variant.pricePaise)"
+              (ngModelChange)="updateVariantField(i, 'pricePaise', $event)"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="0"
+            />
+          </div>
+
+          <div>
+            <label>Stock</label>
+            <input
+              type="number"
+              [(ngModel)]="variant.stock"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="0"
+            />
+          </div>
+
+          <div class="full">
+            <label>Description</label>
+            <input
+              type="text"
+              [(ngModel)]="variant.description"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="e.g., Space Black, 256GB Storage"
+            />
+          </div>
+
+          <div class="full">
+            <label>Variant Image (optional)</label>
+            <input type="file" (change)="onVariantImageChange(i, $event)" />
+            <div class="sub" *ngIf="variant.imageFile">{{ variant.imageFile.name }}</div>
+            <div class="sub" *ngIf="variant.imagePath && !variant.imageFile" style="color: #0066cc;">
+              Current: {{ variant.imagePath }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn-outline" (click)="addVariant()" style="width: 100%; margin-top: 10px;">
+        + Add Variant
+      </button>
+    </div>
+
+    <button class="btn" type="submit" [disabled]="loading" style="margin-top: 20px;">
       {{ loading ? 'Saving...' : 'Save' }}
     </button>
   </form>

@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
+import { FormBuilder, FormArray, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Product, paiseToInr } from "../../../models/product";
+import { Product, ProductVariant, paiseToInr } from "../../../models/product";
 import { AdminProductsService } from "../../../services/admin-products.service";
 import { ProductsService } from "../../../services/products.service";
 import { AdminNavMenuService } from "../../../services/admin-nav-menu.service";
@@ -24,6 +24,9 @@ export class AdminProductFormComponent implements OnInit {
   error: string | null = null;
   imageFile: File | null = null;
   productId?: number;
+  variants: (ProductVariant & { imageFile?: File })[] = [];
+  variantImageFiles: Map<number, File> = new Map();
+  expandVariantsSection = false;
 
   form = this.fb.group({
     name: ["", [Validators.required, Validators.minLength(2)]],
@@ -87,6 +90,10 @@ export class AdminProductFormComponent implements OnInit {
           isBestSelling: (p as any).isBestSelling === true,
           isActive: p.isActive
         });
+        if (p.variants && p.variants.length > 0) {
+          this.variants = [...p.variants];
+          this.expandVariantsSection = true;
+        }
         this.loading = false;
       },
       error: () => {
@@ -94,6 +101,48 @@ export class AdminProductFormComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  addVariant() {
+    const nextId = Math.max(0, ...this.variants.map(v => v.id || 0)) + 1;
+    this.variants.push({
+      id: nextId,
+      name: `Variant ${nextId}`,
+      pricePaise: 0,
+      stock: 0
+    });
+  }
+
+  removeVariant(index: number) {
+    this.variants.splice(index, 1);
+    const variantId = this.variants[index]?.id;
+    if (variantId) {
+      this.variantImageFiles.delete(variantId);
+    }
+  }
+
+  onVariantImageChange(index: number, e: any) {
+    const file = e?.target?.files?.[0];
+    if (file && this.variants[index]) {
+      this.variantImageFiles.set(this.variants[index].id, file);
+      this.variants[index].imageFile = file;
+    }
+  }
+
+  updateVariantField(index: number, field: keyof ProductVariant, value: any) {
+    if (this.variants[index]) {
+      if (field === 'pricePaise') {
+        (this.variants[index] as any)[field] = Math.round(Number(value) * 100);
+      } else if (field === 'stock') {
+        (this.variants[index] as any)[field] = Number(value);
+      } else {
+        (this.variants[index] as any)[field] = value;
+      }
+    }
+  }
+
+  variantPriceInr(pricePaise: number): number {
+    return paiseToInr(pricePaise);
   }
 
   onFileChange(e: any) {
@@ -126,7 +175,9 @@ export class AdminProductFormComponent implements OnInit {
       isHotDeal: (v as any).isHotDeal === true,
       isBestSelling: (v as any).isBestSelling === true,
       isActive: (v as any).isActive === true,
-      image: this.imageFile
+      image: this.imageFile,
+      variants: this.variants,
+      variantImages: Array.from(this.variantImageFiles.entries())
     };
 
     this.loading = true;

@@ -3,6 +3,14 @@ import { HttpClient } from "@angular/common/http";
 import { environment } from "../../environments/environment";
 import { Product } from "../models/product";
 
+export type ProductVariantInput = {
+  id?: number;
+  name: string;
+  description?: string;
+  pricePaise: number;
+  stock: number;
+};
+
 export type ProductUpsertInput = {
   name: string;
   category: string;
@@ -15,6 +23,8 @@ export type ProductUpsertInput = {
   isHotDeal?: boolean;
   isBestSelling?: boolean;
   image?: File | null;
+  variants?: ProductVariantInput[];
+  variantImages?: Array<[number, File]>;
 };
 
 @Injectable({ providedIn: "root" })
@@ -51,6 +61,14 @@ export class AdminProductsService {
     if (input.isHotDeal != null) fd.append("isHotDeal", String(input.isHotDeal));
     if (input.isBestSelling != null) fd.append("isBestSelling", String(input.isBestSelling));
     if (input.image) fd.append("image", input.image);
+    if (input.variants && input.variants.length > 0) {
+      fd.append("variants", JSON.stringify(input.variants));
+    }
+    if (input.variantImages && input.variantImages.length > 0) {
+      input.variantImages.forEach(([variantId, file]) => {
+        fd.append(`variant_image_${variantId}`, file);
+      });
+    }
     return fd;
   }
 }

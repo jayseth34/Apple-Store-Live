@@ -212,6 +212,14 @@ const Bool = z.preprocess((v) => {
   }
   return v;
 }, z.boolean());
+const AdminProductVariantSchema = z.object({
+  id: z.number().int().optional(),
+  name: z.string().min(1),
+  description: z.string().optional(),
+  pricePaise: z.coerce.number().int().nonnegative(),
+  stock: z.coerce.number().int().nonnegative()
+});
+
 const AdminProductSchema = z.object({
   name: z.string().min(2),
   category: z.string().min(2),
@@ -225,17 +233,43 @@ const AdminProductSchema = z.object({
   isTopPick: Bool.default(false),
   isHotDeal: Bool.default(false),
   isBestSelling: Bool.default(false),
-  isActive: Bool.default(true)
+  isActive: Bool.default(true),
+  variants: z.preprocess(
+    (v) => (typeof v === "string" ? JSON.parse(v) : v),
+    z.array(AdminProductVariantSchema).optional()
+  )
 });
 
-app.post("/api/admin/products", requireAdmin, upload.single("image"), async (req, res) => {
+app.post("/api/admin/products", requireAdmin, upload.any(), async (req, res) => {
   const parsed = AdminProductSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: "Invalid body", details: parsed.error.flatten() });
 
-  const imagePath = req.file?.filename ? toImagePath(req.file.filename) : undefined;
+  const files = (req.files as Express.Multer.File[]) || [];
+  const mainImageFile = files.find(f => f.fieldname === "image");
+  const imagePath = mainImageFile?.filename ? toImagePath(mainImageFile.filename) : undefined;
+
+  let variants: any[] = [];
+
+  if (parsed.data.variants && parsed.data.variants.length > 0) {
+    const variantImageMap = new Map<number, string>();
+    files.forEach(f => {
+      const match = f.fieldname.match(/^variant_image_(\d+)$/);
+      if (match) {
+        const variantId = parseInt(match[1], 10);
+        variantImageMap.set(variantId, toImagePath(f.filename));
+      }
+    });
+
+    variants = parsed.data.variants.map((v: any) => ({
+      ...v,
+      imagePath: variantImageMap.get(v.id) || v.imagePath
+    }));
+  }
+
   const created = await createProduct({
     ...parsed.data,
     imagePath,
+    variants: variants.length > 0 ? variants : undefined,
     stock: parsed.data.stock ?? 0,
     isActive: parsed.data.isActive ?? true
   });
@@ -243,19 +277,39 @@ app.post("/api/admin/products", requireAdmin, upload.single("image"), async (req
   return res.status(201).json(created);
 });
 
-app.put("/api/admin/products/:id", requireAdmin, upload.single("image"), async (req, res) => {
+app.put("/api/admin/products/:id", requireAdmin, upload.any(), async (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isFinite(id)) return res.status(400).json({ error: "Invalid id" });
 
   const parsed = AdminProductSchema.partial().safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: "Invalid body", details: parsed.error.flatten() });
 
-  const imagePath = req.file?.filename ? toImagePath(req.file.filename) : undefined;
-  const updated = await updateProduct(id, {
-    ...parsed.data,
-    ...(imagePath ? { imagePath } : {})
-  });
+  const files = (req.files as Express.Multer.File[]) || [];
+  const mainImageFile = files.find(f => f.fieldname === "image");
+  const imagePath = mainImageFile?.filename ? toImagePath(mainImageFile.filename) : undefined;
 
+  const updateData: any = { ...parsed.data };
+  if (imagePath) updateData.imagePath = imagePath;
+
+  if (parsed.data.variants && parsed.data.variants.length > 0) {
+    const variantImageMap = new Map<number, string>();
+    files.forEach(f => {
+      const match = f.fieldname.match(/^variant_image_(\d+)$/);
+      if (match) {
+        const variantId = parseInt(match[1], 10);
+        variantImageMap.set(variantId, toImagePath(f.filename));
+      }
+    });
+
+    updateData.variants = parsed.data.variants.map((v: any) => ({
+      ...v,
+      imagePath: variantImageMap.get(v.id) || v.imagePath
+    }));
+  } else {
+    delete updateData.variants;
+  }
+
+  const updated = await updateProduct(id, updateData);
   if (!updated) return res.status(404).json({ error: "Not found" });
   return res.json(updated);
 });

@@ -4,6 +4,7 @@ import { BehaviorSubject } from "rxjs";
 export type CartItem = {
   productId: number;
   quantity: number;
+  variantId?: number;
 };
 
 const STORAGE_KEY = "cart_v1";
@@ -25,13 +26,13 @@ export class CartService {
     return this.subject.value.reduce((sum, i) => sum + i.quantity, 0);
   }
 
-  add(productId: number, quantity = 1) {
+  add(productId: number, quantity = 1, variantId?: number) {
     const items = [...this.subject.value];
-    const idx = items.findIndex((i) => i.productId === productId);
+    const idx = items.findIndex((i) => i.productId === productId && i.variantId === variantId);
     if (idx >= 0) {
       items[idx] = { ...items[idx], quantity: clampQty(items[idx].quantity + quantity) };
     } else {
-      items.push({ productId, quantity: clampQty(quantity) });
+      items.push({ productId, quantity: clampQty(quantity), variantId });
     }
     this.set(items);
   }

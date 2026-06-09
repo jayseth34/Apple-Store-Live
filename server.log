@@ -1,0 +1,23 @@
+
+> appstore@0.0.0 start
+> ng serve
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+
+Initial chunk files   | Names         |  Raw size
+vendor.js             | vendor        |   2.79 MB | 
+main.js               | main          | 948.47 kB | 
+polyfills.js          | polyfills     | 265.79 kB | 
+styles.css, styles.js | styles        | 193.77 kB | 
+runtime.js            | runtime       |   6.49 kB | 
+
+                      | Initial total |   4.17 MB
+
+Build at: 2026-06-09T13:25:34.957Z - Hash: 2486fcb398fff2b5 - Time: 9609ms
+
+** Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
+
+
+√ Compiled successfully.

@@ -9,6 +9,15 @@
   | "controller"
   | string;
 
+export interface ProductVariant {
+  id: number;
+  name: string;
+  description?: string;
+  pricePaise: number;
+  imagePath?: string;
+  stock: number;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -20,6 +29,7 @@ export interface Product {
   isTopPick?: boolean;
   stock: number;
   isActive: boolean;
+  variants?: ProductVariant[];
   createdAt: string;
   updatedAt: string;
 }

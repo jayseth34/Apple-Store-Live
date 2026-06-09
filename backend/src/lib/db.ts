@@ -4,6 +4,15 @@ import crypto from "node:crypto";
 import { Low } from "lowdb";
 import { JSONFile } from "lowdb/node";
 
+export type ProductVariant = {
+  id: number;
+  name: string;
+  description?: string;
+  pricePaise: number;
+  imagePath?: string;
+  stock: number;
+};
+
 export type Product = {
   id: number;
   name: string;
@@ -17,6 +26,7 @@ export type Product = {
   isBestSelling?: boolean;
   stock: number;
   isActive: boolean;
+  variants?: ProductVariant[];
   createdAt: string;
   updatedAt: string;
 };
@@ -94,6 +104,7 @@ type Data = {
   nextOrderId: number;
   nextNavMenuId: number;
   nextNavMenuItemId: number;
+  nextVariantId: number;
 };
 
 const defaultData: Data = {
@@ -104,7 +115,8 @@ const defaultData: Data = {
   nextProductId: 1,
   nextOrderId: 1,
   nextNavMenuId: 1,
-  nextNavMenuItemId: 1
+  nextNavMenuItemId: 1,
+  nextVariantId: 1000
 };
 
 const dataDir = path.join(process.cwd(), "data");
@@ -130,6 +142,7 @@ export async function initDb() {
   if (!Array.isArray(db.data.navMenuItems)) db.data.navMenuItems = [];
   if (!db.data.nextNavMenuId) db.data.nextNavMenuId = 1;
   if (!db.data.nextNavMenuItemId) db.data.nextNavMenuItemId = 1;
+  if (!db.data.nextVariantId) db.data.nextVariantId = 1000;
 
   if (db.data.products.length === 0) {
     const now = new Date().toISOString();
@@ -312,9 +325,19 @@ export async function getActiveProduct(id: number) {
 export async function createProduct(input: Omit<Product, "id" | "createdAt" | "updatedAt">) {
   await db.read();
   const now = new Date().toISOString();
+
+  let variants = input.variants;
+  if (variants && variants.length > 0) {
+    variants = variants.map((v) => ({
+      ...v,
+      id: v.id || db.data!.nextVariantId++
+    }));
+  }
+
   const product: Product = {
     id: db.data!.nextProductId++,
     ...input,
+    variants,
     createdAt: now,
     updatedAt: now
   };
@@ -327,7 +350,16 @@ export async function updateProduct(id: number, patch: Partial<Omit<Product, "id
   await db.read();
   const product = db.data!.products.find((p) => p.id === id);
   if (!product) return null;
-  Object.assign(product, patch, { updatedAt: new Date().toISOString() });
+
+  let patchWithVariants = { ...patch };
+  if (patch.variants && patch.variants.length > 0) {
+    patchWithVariants.variants = patch.variants.map((v) => ({
+      ...v,
+      id: v.id || db.data!.nextVariantId++
+    }));
+  }
+
+  Object.assign(product, patchWithVariants, { updatedAt: new Date().toISOString() });
   await db.write();
   return product;
 }

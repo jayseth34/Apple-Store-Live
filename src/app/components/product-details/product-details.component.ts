@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { environment } from "../../../environments/environment";
-import { Product, fallbackImageForCategory, paiseToInr } from "../../models/product";
+import { Product, ProductVariant, fallbackImageForCategory, paiseToInr } from "../../models/product";
 import { CartService } from "../../services/cart.service";
 import { CheckoutProfileService } from "../../services/checkout-profile.service";
 import { MyOrdersService } from "../../services/my-orders.service";
@@ -16,6 +16,7 @@ import { RazorpayService } from "../../services/razorpay.service";
 })
 export class ProductDetailsComponent implements OnInit {
   product: Product | null = null;
+  selectedVariant: ProductVariant | null = null;
   loading = false;
   error: string | null = null;
   quantity = 1;
@@ -53,6 +54,7 @@ export class ProductDetailsComponent implements OnInit {
     this.productsApi.get(id).subscribe({
       next: (p) => {
         this.product = p;
+        this.selectedVariant = null;
         this.loading = false;
       },
       error: () => {
@@ -62,14 +64,39 @@ export class ProductDetailsComponent implements OnInit {
     });
   }
 
+  selectVariant(variant: ProductVariant) {
+    this.selectedVariant = variant;
+  }
+
+  getDisplayPrice(): number {
+    if (this.selectedVariant) {
+      return this.selectedVariant.pricePaise;
+    }
+    return this.product?.pricePaise || 0;
+  }
+
+  getDisplayStock(): number {
+    if (this.selectedVariant) {
+      return this.selectedVariant.stock;
+    }
+    return this.product?.stock || 0;
+  }
+
+  hasVariants(): boolean {
+    return !!(this.product?.variants && this.product.variants.length > 0);
+  }
+
   saveCustomer() {
     this.profile.save(this.customer);
   }
 
   displayImageUrl() {
     if (!this.product) return null;
-    if (!this.product.imagePath) return fallbackImageForCategory(this.product.category);
-    const p = this.product.imagePath;
+
+    const imagePath = this.selectedVariant?.imagePath || this.product.imagePath;
+    if (!imagePath) return fallbackImageForCategory(this.product.category);
+
+    const p = imagePath;
     if (p.startsWith("http")) return p;
     if (p.startsWith("/")) return `${environment.apiBaseUrl}${p}`;
     return `${environment.apiBaseUrl}/${p}`;
@@ -101,7 +128,7 @@ export class ProductDetailsComponent implements OnInit {
 
   addToCart() {
     if (!this.product) return;
-    this.cart.add(this.product.id, this.quantity);
+    this.cart.add(this.product.id, this.quantity, this.selectedVariant?.id);
     this.addedToCart = true;
     setTimeout(() => (this.addedToCart = false), 1600);
   }
