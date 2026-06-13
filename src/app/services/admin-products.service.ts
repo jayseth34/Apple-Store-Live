@@ -9,10 +9,12 @@ export type ProductVariantInput = {
   description?: string;
   pricePaise: number;
   stock: number;
+  sku?: string;
 };
 
 export type ProductUpsertInput = {
   name: string;
+  sku?: string;
   category: string;
   description: string;
   pricePaise: number;
@@ -48,6 +50,7 @@ export class AdminProductsService {
   private toFormData(input: Partial<ProductUpsertInput>) {
     const fd = new FormData();
     if (input.name != null) fd.append("name", input.name);
+    if (input.sku != null) fd.append("sku", input.sku);
     if (input.category != null) fd.append("category", input.category);
     if (input.description != null) fd.append("description", input.description);
     if (input.pricePaise != null) fd.append("pricePaise", String(input.pricePaise));

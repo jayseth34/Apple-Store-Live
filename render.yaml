@@ -1,0 +1,54 @@
+services:
+  - type: web
+    name: apple-store-backend
+    runtime: node
+    region: singapore
+    plan: free
+
+    # Build configuration
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm start
+
+    # Environment variables - add your production values
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_ORIGIN
+        value: https://apple-store-live.onrender.com
+      - key: ADMIN_SECRET
+        value: change_me_in_render_dashboard
+      - key: RAZORPAY_KEY_ID
+        value: change_me_in_render_dashboard
+      - key: RAZORPAY_KEY_SECRET
+        value: change_me_in_render_dashboard
+      - key: RAZORPAY_WEBHOOK_SECRET
+        value: change_me_in_render_dashboard
+
+    # Persistent disk for database
+    disk:
+      name: apple-store-data
+      mountPath: /app/backend/data
+      sizeGB: 10
+
+    # Health check
+    healthCheckPath: /api/health
+    healthCheckInterval: 10
+
+    # Scaling settings
+    maxInstances: 1
+    preDeployCommand: npm ci
+
+  - type: static
+    name: apple-store-frontend
+    runtime: node
+    region: singapore
+    plan: free
+
+    # Build configuration
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+
+    # Environment for build-time
+    envVars:
+      - key: NODE_ENV
+        value: production

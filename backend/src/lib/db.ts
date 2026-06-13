@@ -11,6 +11,7 @@ export type ProductVariant = {
   pricePaise: number;
   imagePath?: string;
   stock: number;
+  sku?: string;
 };
 
 export type Product = {
@@ -21,6 +22,7 @@ export type Product = {
   pricePaise: number;
   compareAtPricePaise?: number;
   imagePath?: string;
+  sku?: string;
   isTopPick?: boolean;
   isHotDeal?: boolean;
   isBestSelling?: boolean;
@@ -143,153 +145,6 @@ export async function initDb() {
   if (!db.data.nextNavMenuId) db.data.nextNavMenuId = 1;
   if (!db.data.nextNavMenuItemId) db.data.nextNavMenuItemId = 1;
   if (!db.data.nextVariantId) db.data.nextVariantId = 1000;
-
-  if (db.data.products.length === 0) {
-    const now = new Date().toISOString();
-    const seed: Omit<Product, "id">[] = [
-      {
-        name: "MagSafe Power Bank (Compatible)",
-        category: "power bank",
-        description: "Low-cost compatible MagSafe-style power bank for iPhone.",
-        pricePaise: 199900,
-        compareAtPricePaise: 249900,
-        stock: 25,
-        isActive: true,
-        createdAt: now,
-        updatedAt: now
-      },
-      {
-        name: "Silicone Case Cover",
-        category: "covers",
-        description: "Soft-touch silicone cover compatible with popular iPhone models.",
-        pricePaise: 59900,
-        compareAtPricePaise: 99900,
-        stock: 100,
-        isActive: true,
-        createdAt: now,
-        updatedAt: now
-      },
-      {
-        name: "Wireless Keyboard (Mac Layout)",
-        category: "keyboard",
-        description: "Compact wireless keyboard with Mac-friendly layout.",
-        pricePaise: 149900,
-        compareAtPricePaise: 199900,
-        stock: 40,
-        isActive: true,
-        createdAt: now,
-        updatedAt: now
-      },
-      {
-        name: "Wireless Mouse",
-        category: "mouse",
-        description: "Ergonomic wireless mouse for iPad/Mac/Windows.",
-        pricePaise: 99900,
-        compareAtPricePaise: 129900,
-        stock: 60,
-        isActive: true,
-        createdAt: now,
-        updatedAt: now
-      },
-      {
-        name: "Stylus Pencil (Compatible)",
-        category: "pencil",
-        description: "Affordable stylus compatible with iPad (model-dependent).",
-        pricePaise: 129900,
-        compareAtPricePaise: 179900,
-        stock: 50,
-        isActive: true,
-        createdAt: now,
-        updatedAt: now
-      },
-      {
-        name: "True Wireless Earbuds (AirPods-style)",
-        category: "airpods",
-        description: "Budget true wireless earbuds with charging case.",
-        pricePaise: 179900,
-        compareAtPricePaise: 249900,
-        stock: 35,
-        isActive: true,
-        createdAt: now,
-        updatedAt: now
-      },
-      {
-        name: "Fitness Band (WHOOP-style)",
-        category: "whoop",
-        description: "Budget fitness band for daily activity tracking.",
-        pricePaise: 249900,
-        compareAtPricePaise: 299900,
-        stock: 20,
-        isActive: true,
-        createdAt: now,
-        updatedAt: now
-      },
-      {
-        name: "Bluetooth Game Controller",
-        category: "controller",
-        description: "Bluetooth controller compatible with iPhone/iPad/Mac (game support varies).",
-        pricePaise: 229900,
-        compareAtPricePaise: 279900,
-        stock: 30,
-        isActive: true,
-        createdAt: now,
-        updatedAt: now
-      }
-    ];
-
-    for (const p of seed) {
-      db.data.products.push({ id: db.data.nextProductId++, ...p });
-    }
-
-    await db.write();
-  }
-  if (db.data.navMenus.length === 0) {
-    const now = new Date().toISOString();
-    const appleMenu: NavMenu = {
-      id: db.data.nextNavMenuId++,
-      name: "Apple Products",
-      slug: "apple-products",
-      order: 1,
-      isActive: true,
-      createdAt: now,
-      updatedAt: now
-    };
-    db.data.navMenus.push(appleMenu);
-
-    const appleItems: Omit<NavMenuItem, "id">[] = [
-      { menuId: appleMenu.id, name: "MacBook", categorySlug: "macbook", order: 1, isActive: true, createdAt: now, updatedAt: now },
-      { menuId: appleMenu.id, name: "Mac Mini", categorySlug: "mac mini", order: 2, isActive: true, createdAt: now, updatedAt: now },
-      { menuId: appleMenu.id, name: "AirPods", categorySlug: "airpods", order: 3, isActive: true, createdAt: now, updatedAt: now },
-      { menuId: appleMenu.id, name: "iPhone", categorySlug: "iphone", order: 4, isActive: true, createdAt: now, updatedAt: now },
-      { menuId: appleMenu.id, name: "iPads", categorySlug: "ipad", order: 5, isActive: true, createdAt: now, updatedAt: now },
-      { menuId: appleMenu.id, name: "Accessories", categorySlug: "accessories", order: 6, isActive: true, createdAt: now, updatedAt: now }
-    ];
-    for (const item of appleItems) {
-      db.data.navMenuItems.push({ id: db.data.nextNavMenuItemId++, ...item });
-    }
-    await db.write();
-  }
-
-  const seedNames = new Set([
-    "MagSafe Power Bank (Compatible)",
-    "Silicone Case Cover",
-    "Wireless Keyboard (Mac Layout)",
-    "Wireless Mouse",
-    "Stylus Pencil (Compatible)",
-    "True Wireless Earbuds (AirPods-style)",
-    "Fitness Band (WHOOP-style)",
-    "Bluetooth Game Controller"
-  ]);
-
-  const looksLikeSeed =
-    db.data!.products.length === seedNames.size &&
-    db.data!.products.every((p) => seedNames.has(p.name));
-
-  // Clear seeded Top Picks so admin can choose manually
-  if (looksLikeSeed && db.data!.products.some((p) => p.isTopPick)) {
-    for (const p of db.data!.products) p.isTopPick = false;
-    await db.write();
-  }
 }
 
 export async function listActiveProducts(params: { category?: string; q?: string; topPick?: boolean; hotDeal?: boolean; bestSelling?: boolean }) {
@@ -306,9 +161,19 @@ export async function listActiveProducts(params: { category?: string; q?: string
     .filter((p) => (hotDeal ? !!p.isHotDeal : true))
     .filter((p) => (bestSelling ? !!p.isBestSelling : true))
     .filter((p) => (category ? p.category.toLowerCase() === category : true))
-    .filter((p) =>
-      q ? p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q) : true
-    )
+    .filter((p) => {
+      if (!q) return true;
+      const productMatches =
+        p.name.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q) ||
+        (p.sku && p.sku.toLowerCase().includes(q));
+      const variantMatches = p.variants?.some((v) =>
+        v.name.toLowerCase().includes(q) ||
+        (v.description && v.description.toLowerCase().includes(q)) ||
+        (v.sku && v.sku.toLowerCase().includes(q))
+      );
+      return productMatches || variantMatches;
+    })
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 }
 

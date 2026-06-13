@@ -170,6 +170,29 @@ app.delete("/api/admin/db/:collection/:id", requireAdmin, async (req, res) => {
   return res.json({ ok: true });
 });
 
+app.get("/api/products/search", async (req, res) => {
+  const category = typeof req.query.category === "string" ? req.query.category : undefined;
+  const q = typeof req.query.q === "string" ? req.query.q : undefined;
+
+  const topPick =
+    typeof req.query.topPick === "string"
+      ? ["1", "true", "yes"].includes(req.query.topPick.toLowerCase())
+      : undefined;
+
+  const hotDeal =
+    typeof req.query.hotDeal === "string"
+      ? ["1", "true", "yes"].includes(req.query.hotDeal.toLowerCase())
+      : undefined;
+
+  const bestSelling =
+    typeof req.query.bestSelling === "string"
+      ? ["1", "true", "yes"].includes(req.query.bestSelling.toLowerCase())
+      : undefined;
+
+  const products = await listActiveProducts({ category, q, topPick, hotDeal, bestSelling });
+  return res.json(products);
+});
+
 app.get("/api/products", async (req, res) => {
   const category = typeof req.query.category === "string" ? req.query.category : undefined;
   const q = typeof req.query.q === "string" ? req.query.q : undefined;
@@ -217,11 +240,13 @@ const AdminProductVariantSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
   pricePaise: z.coerce.number().int().nonnegative(),
-  stock: z.coerce.number().int().nonnegative()
+  stock: z.coerce.number().int().nonnegative(),
+  sku: z.string().optional()
 });
 
 const AdminProductSchema = z.object({
   name: z.string().min(2),
+  sku: z.string().optional(),
   category: z.string().min(2),
   description: z.string().min(5),
   pricePaise: z.coerce.number().int().positive(),

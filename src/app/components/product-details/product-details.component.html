@@ -17,6 +17,9 @@
       <div class="right">
         <div class="product-category">{{ product.category }}</div>
         <h2>{{ product.name }}</h2>
+        <p *ngIf="product.sku" style="font-size: 12px; color: #666; margin: 8px 0;">
+          SKU: <strong>{{ product.sku }}</strong>
+        </p>
         <p>{{ product.description }}</p>
 
         <div *ngIf="hasVariants()" class="variants-section" style="margin: 20px 0; padding: 15px; background: #f9f9f9; border-radius: 4px;">
@@ -42,6 +45,9 @@
               <div style="font-weight: 600; color: #333;">{{ variant.name }}</div>
               <div style="font-size: 12px; color: #666; margin-top: 4px;">
                 &#8377;{{ inr(variant.pricePaise) | number: '1.0-2' }}
+              </div>
+              <div *ngIf="variant.sku" style="font-size: 11px; color: #007AFF; margin-top: 2px;">
+                SKU: {{ variant.sku }}
               </div>
               <div style="font-size: 11px; color: #999; margin-top: 4px;">
                 Stock: {{ variant.stock }}

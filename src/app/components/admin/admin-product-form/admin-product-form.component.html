@@ -18,6 +18,11 @@
       </div>
 
       <div>
+        <label>SKU Code</label>
+        <input formControlName="sku" placeholder="e.g., APPLE-IPHONE-BLK-256" />
+      </div>
+
+      <div>
         <label>Category</label>
         <select formControlName="category">
           <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
@@ -119,6 +124,16 @@
               [(ngModel)]="variant.name"
               [ngModelOptions]="{ standalone: true }"
               placeholder="e.g., Black, 256GB, Large"
+            />
+          </div>
+
+          <div>
+            <label>Variant SKU</label>
+            <input
+              type="text"
+              [(ngModel)]="variant.sku"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="e.g., VAR-001, BLK-256GB"
             />
           </div>
 

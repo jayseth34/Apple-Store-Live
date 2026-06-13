@@ -7,9 +7,26 @@
 
 <section class="filter-section">
   <div class="container">
+    <div style="margin-bottom: 15px;">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="onSearch(searchQuery)"
+        placeholder="Search by product name or SKU code..."
+        style="
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 14px;
+        "
+      />
+    </div>
+
     <div class="filter-controls">
       <div class="results-info">
         <span *ngIf="activeCategory">Category: {{ activeCategory }} | </span>
+        <span *ngIf="searchQuery">Search: "{{ searchQuery }}" | </span>
         Showing {{ products.length }} products
       </div>
       <div class="filter-right">
@@ -41,6 +58,12 @@
           <div class="catalog-category">{{ product.category }}</div>
           <h3 class="catalog-title">{{ product.name }}</h3>
           <p class="catalog-desc">{{ product.description }}</p>
+          <div *ngIf="product.sku" style="font-size: 12px; color: #666; margin: 5px 0;">
+            SKU: <strong>{{ product.sku }}</strong>
+            <span *ngIf="product.variants && product.variants.length > 0" style="color: #999;">
+              (+{{ product.variants.length }} variant{{ product.variants.length !== 1 ? 's' : '' }})
+            </span>
+          </div>
           <div class="catalog-price">
             <span class="now">&#8377;{{ inr(product.pricePaise) | number: '1.0-2' }}</span>
             <span class="was" *ngIf="product.compareAtPricePaise">

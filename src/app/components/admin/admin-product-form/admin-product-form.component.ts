@@ -30,6 +30,7 @@ export class AdminProductFormComponent implements OnInit {
 
   form = this.fb.group({
     name: ["", [Validators.required, Validators.minLength(2)]],
+    sku: [""],
     category: [FALLBACK_CATEGORIES[0], [Validators.required]],
     description: ["", [Validators.required, Validators.minLength(5)]],
     priceInr: [0, [Validators.required, Validators.min(1)]],
@@ -80,6 +81,7 @@ export class AdminProductFormComponent implements OnInit {
       next: (p: Product) => {
         this.form.patchValue({
           name: p.name,
+          sku: p.sku || "",
           category: p.category as any,
           description: p.description,
           priceInr: paiseToInr(p.pricePaise),
@@ -165,6 +167,7 @@ export class AdminProductFormComponent implements OnInit {
     const v = this.form.value;
     const input = {
       name: String(v.name),
+      sku: v.sku ? String(v.sku) : undefined,
       category: String(v.category),
       description: String(v.description),
       pricePaise: Math.round(Number(v.priceInr) * 100),

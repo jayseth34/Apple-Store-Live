@@ -17,6 +17,7 @@ export class ProductsComponent implements OnInit {
   error: string | null = null;
   activeCategory: string | null = null;
   sortBy: "latest" | "price-low" | "price-high" = "latest";
+  searchQuery = "";
 
   constructor(
     private productsApi: ProductsService,
@@ -28,6 +29,7 @@ export class ProductsComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((m) => {
       this.activeCategory = m.get("category");
+      this.searchQuery = m.get("search") || "";
       this.load();
     });
   }
@@ -36,16 +38,39 @@ export class ProductsComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    this.productsApi.list({ category: this.activeCategory || undefined }).subscribe({
-      next: (products) => {
-        this.productsRaw = products;
-        this.applySort();
-        this.loading = false;
-      },
-      error: () => {
-        this.error = "Failed to load products";
-        this.loading = false;
-      }
+    if (this.searchQuery.trim()) {
+      this.productsApi.search(this.searchQuery, { category: this.activeCategory || undefined }).subscribe({
+        next: (products) => {
+          this.productsRaw = products;
+          this.applySort();
+          this.loading = false;
+        },
+        error: () => {
+          this.error = "Failed to search products";
+          this.loading = false;
+        }
+      });
+    } else {
+      this.productsApi.list({ category: this.activeCategory || undefined }).subscribe({
+        next: (products) => {
+          this.productsRaw = products;
+          this.applySort();
+          this.loading = false;
+        },
+        error: () => {
+          this.error = "Failed to load products";
+          this.loading = false;
+        }
+      });
+    }
+  }
+
+  onSearch(query: string): void {
+    this.searchQuery = query;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { search: query || null, category: this.activeCategory || null },
+      queryParamsHandling: "merge"
     });
   }
 

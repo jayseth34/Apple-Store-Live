@@ -16,6 +16,7 @@ export interface ProductVariant {
   pricePaise: number;
   imagePath?: string;
   stock: number;
+  sku?: string;
 }
 
 export interface Product {
@@ -26,6 +27,7 @@ export interface Product {
   pricePaise: number;
   compareAtPricePaise?: number;
   imagePath?: string;
+  sku?: string;
   isTopPick?: boolean;
   stock: number;
   isActive: boolean;
